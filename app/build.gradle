@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.example.sportsapp'
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.sportsapp"
         minSdk 29
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
