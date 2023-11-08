@@ -10,11 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class SportSelection extends AppCompatActivity {
-
+    Sport sport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sport_selection);
+
     }
 
     @Override
@@ -28,27 +29,32 @@ public class SportSelection extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.baseball:
-                Intent appliances = new Intent(this, Baseball.class);
-                startActivity(appliances);
+                sport.name = "Baseball";
+//                Intent appliances = new Intent(this, Baseball.class);
+//                startActivity(appliances);
                 break;
 
             case R.id.hockey:
-                Intent tvs = new Intent(this, Hockey.class);
-                startActivity(tvs);
+                sport.name = "Hockey";
+//                Intent hockey = new Intent(this, Hockey.class);
+//                startActivity(hockey);
                 break;
 
             case R.id.tennis:
-                Intent computers = new Intent(this, Tennis.class);
-                startActivity(computers);
+                sport.name = "Tennis";
+//                Intent computers = new Intent(this, Tennis.class);
+//                startActivity(computers);
                 break;
 
             case R.id.soccer:
-                Intent furniture = new Intent(this, Soccer.class);
-                startActivity(furniture);
+                sport.name = "Soccer";
+//                Intent soccer = new Intent(this, Soccer.class);
+//                startActivity(soccer);
                 break;
             case R.id.football:
-                Intent auto = new Intent(this, Football.class);
-                startActivity(auto);
+                sport.name = "Football";
+//                Intent soccer = new Intent(this, Football.class);
+//                startActivity(soccer);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
