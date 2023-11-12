@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             // check if USERNAME already exists in DB. If it does, pop up toast with error for duplicate username.
             // If username is available, save new username and password into DB. Add username into preferences and enter app.
+            // some stuff
         }
     }
 
