@@ -2,14 +2,24 @@ package com.example.sportsapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
+
     EditText username, password;
+    private SportsDBHandler sportsDbHandler;
+    private APIHandler apiHandler;
+    APICallWrapper wrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +28,18 @@ public class MainActivity extends AppCompatActivity {
 
         username = findViewById(R.id.editTextUsername);
         password = findViewById(R.id.editTextPassword);
+
+        sportsDbHandler = new SportsDBHandler(MainActivity.this);
+        apiHandler = new APIHandler();
+
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        if (!settings.getBoolean("DBS_LOADED", false)) {
+            populateDatabasesFromAPI();
+            editor.putBoolean("DBS_LOADED", true);
+            editor.apply();
+        }
     }
 
     public void onLogIn(View view) {
@@ -59,5 +81,42 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    private void populateDatabasesFromAPI() {
+        _getSports();
+    }
+
+    private void _getSports() {
+        String url = "https://thesportsdb.p.rapidapi.com/all_sports.php";
+        wrapper = new APICallWrapper();
+        apiHandler.getData(MainActivity.this, url, null, "sports", wrapper);
+
+        // TODO: figure out how to wait until call in done to add to db
+        // maybe make all calls now, have a preference for each call, and populate for the first time when they go
+        // to that page that requires it, and then set the key to true?
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//
+//        JSONArray responseArray = new JSONArray(wrapper.response);
+//
+//        for (int i=0; i < responseArray.length(); i++) {
+//            try {
+//                JSONObject oneObject = responseArray.getJSONObject(i);
+//                Sport sport = new Sport();
+//                sport.id = oneObject.getInt("idSport");
+//                sport.name = oneObject.getString("strSport");
+//                sport.imageUrl = oneObject.getString("strSportThumb");
+//
+//                sportsDbHandler.addNewSport(sport);
+//            } catch (JSONException e) {
+//                Log.d("sport", "Error parsing sport " );
+//            }
+//        }
+//
+
     }
 }
