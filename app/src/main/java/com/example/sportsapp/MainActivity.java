@@ -2,6 +2,7 @@ package com.example.sportsapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
     EditText username, password;
     private SportsDBHandler sportsDbHandler;
     private APIHandler apiHandler;
-    APICallWrapper wrapper;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +34,11 @@ public class MainActivity extends AppCompatActivity {
         sportsDbHandler = new SportsDBHandler(MainActivity.this);
         apiHandler = new APIHandler();
 
-        SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        settings = getPreferences(MODE_PRIVATE);
+        editor = settings.edit();
 
-        if (!settings.getBoolean("DBS_LOADED", false)) {
+        if (!settings.getBoolean("SPORTS_TABLE_LOADED", false)) {
             populateDatabasesFromAPI();
-            editor.putBoolean("DBS_LOADED", true);
-            editor.apply();
         }
     }
 
@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             // check if user exists in DB. If so, grab their data to put into app preferences (username, fav teams, tickets) and enter app.
             // if user doesn't exist, pop up toast with error.
+
+            editor.putString("username", user.getUsername());
+            editor.apply();
+            Intent sports = new Intent(MainActivity.this, SportSelection.class);
+            this.startActivity(sports);
         }
     }
 
@@ -56,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
             // check if USERNAME already exists in DB. If it does, pop up toast with error for duplicate username.
             // If username is available, save new username and password into DB. Add username into preferences and enter app.
             // some stuff
+
+            editor.putString("username", user.getUsername());
+            editor.apply();
+            Intent sports = new Intent(MainActivity.this, SportSelection.class);
+            this.startActivity(sports);
         }
     }
 
@@ -84,39 +94,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void populateDatabasesFromAPI() {
-        _getSports();
+        new Thread() {
+            @Override public void run() { _getSports(); }
+        }.start();
     }
 
     private void _getSports() {
         String url = "https://thesportsdb.p.rapidapi.com/all_sports.php";
-        wrapper = new APICallWrapper();
+        APICallWrapper wrapper = new APICallWrapper();
         apiHandler.getData(MainActivity.this, url, null, "sports", wrapper);
 
-        // TODO: figure out how to wait until call in done to add to db
-        // maybe make all calls now, have a preference for each call, and populate for the first time when they go
-        // to that page that requires it, and then set the key to true?
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//        }
-//
-//        JSONArray responseArray = new JSONArray(wrapper.response);
-//
-//        for (int i=0; i < responseArray.length(); i++) {
-//            try {
-//                JSONObject oneObject = responseArray.getJSONObject(i);
-//                Sport sport = new Sport();
-//                sport.id = oneObject.getInt("idSport");
-//                sport.name = oneObject.getString("strSport");
-//                sport.imageUrl = oneObject.getString("strSportThumb");
-//
-//                sportsDbHandler.addNewSport(sport);
-//            } catch (JSONException e) {
-//                Log.d("sport", "Error parsing sport " );
-//            }
-//        }
-//
+        try {
+            wrapper.waitForReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        JSONObject responseObject;
+        try {
+            responseObject = new JSONObject(wrapper.response);
+            JSONArray responseArray = responseObject.getJSONArray("sports");
+
+            for (int i=0; i < responseArray.length(); i++) {
+                JSONObject oneObject = responseArray.getJSONObject(i);
+                Sport sport = new Sport();
+                sport.id = oneObject.getInt("idSport");
+                sport.name = oneObject.getString("strSport");
+                sport.imageUrl = oneObject.getString("strSportThumb");
+
+                sportsDbHandler.addNewSport(sport);
+            }
+
+            editor.putBoolean("SPORTS_TABLE_LOADED", true);
+            editor.apply();
+        } catch (JSONException e) {
+            Log.d("sport", "Error parsing sport " + e.getMessage());
+        }
     }
 }

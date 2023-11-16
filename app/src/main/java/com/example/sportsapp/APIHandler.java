@@ -35,6 +35,7 @@ public class APIHandler {
                     @Override
                     public void onResponse(String response) {
                         wrapper.response = response;
+                        wrapper.setReady();
                         Log.d(logTag, response);
                     }
                 },
