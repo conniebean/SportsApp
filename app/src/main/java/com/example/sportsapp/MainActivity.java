@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     EditText username, password;
-    private SportsDBHandler sportsDbHandler;
+    private DBHandler dbHandler;
     private APIHandler apiHandler;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.editTextUsername);
         password = findViewById(R.id.editTextPassword);
 
-        sportsDbHandler = new SportsDBHandler(MainActivity.this);
+        dbHandler = new DBHandler(MainActivity.this);
         apiHandler = new APIHandler();
 
         settings = getPreferences(MODE_PRIVATE);
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 sport.name = oneObject.getString("strSport");
                 sport.imageUrl = oneObject.getString("strSportThumb");
 
-                sportsDbHandler.addNewSport(sport);
+                dbHandler.addNewSport(sport);
             }
 
             editor.putBoolean("SPORTS_TABLE_LOADED", true);
