@@ -21,7 +21,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TEAMS_NAME_COL = "name";
     private static final String TEAMS_IMAGEURL_COL = "imageUrl";
     private static final String TEAMS_SPORT_COL = "sportId";
-
+    private static final String TEAMS_FAVOURITE_COL = "favourite";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -40,7 +40,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TEAMS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TEAMS_NAME_COL + " TEXT, "
                 + TEAMS_IMAGEURL_COL + " TEXT, "
-                + TEAMS_SPORT_COL + "INTEGER)";
+                + TEAMS_SPORT_COL + " INTEGER, "
+                + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
     }
     // this method is use to add new sport to our sqlite database.
@@ -63,10 +64,12 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(TEAMS_NAME_COL, team.name);
         values.put(TEAMS_IMAGEURL_COL, team.imageUrl);
         values.put(TEAMS_SPORT_COL, team.sportId);
+        values.put(TEAMS_FAVOURITE_COL, team.favourite);
         Log.i("database", db.toString());
         db.insert(TEAMS_TABLE_NAME, null, values);
         db.close();
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.

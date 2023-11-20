@@ -5,4 +5,5 @@ public class Team {
     public String name;
     public String imageUrl;
     public int sportId;
+    public boolean favourite = false;
 }
