@@ -118,6 +118,24 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public ArrayList<Sport> getAllSports(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorSports = db.rawQuery("SELECT * FROM " + SPORTS_TABLE_NAME, null);
+
+        ArrayList<Sport> sportsArrayList = new ArrayList<>();
+
+        if (cursorSports.moveToFirst()){
+            do {
+                sportsArrayList.add(new Sport(
+                        cursorSports.getString(1),
+                        cursorSports.getString(2)));
+            }while (cursorSports.moveToNext());
+        }
+
+        cursorSports.close();
+        return sportsArrayList;
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.

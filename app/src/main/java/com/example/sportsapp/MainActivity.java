@@ -123,11 +123,8 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i=0; i < responseArray.length(); i++) {
                 JSONObject oneObject = responseArray.getJSONObject(i);
-                Sport sport = new Sport();
+                Sport sport = new Sport(oneObject.getString("strSport"),oneObject.getString("strSportThumb"));
                 sport.id = oneObject.getInt("idSport");
-                sport.name = oneObject.getString("strSport");
-                sport.imageUrl = oneObject.getString("strSportThumb");
-
                 dbHandler.addNewSport(sport);
             }
 
