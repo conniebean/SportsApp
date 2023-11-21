@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">SportsApp</string>
-    <string name="baseball">Baseball</string>
-    <string name="hockey">Hockey</string>
-    <string name="tennis">Tennis</string>
-    <string name="soccer">Soccer</string>
-    <string name="football">Football</string>
+    <string name="sports">Sports</string>
+    <string name="leagues">Leagues</string>
+    <string name="teams">Teams</string>
+    <string name="tickets">Tickets</string>
+    <string name="favourites">My Favourites</string>
 </resources>

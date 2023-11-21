@@ -2,9 +2,12 @@ package com.example.sportsapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
     // creating a constant variables for our database.
@@ -68,6 +71,24 @@ public class DBHandler extends SQLiteOpenHelper {
         Log.i("database", db.toString());
         db.insert(TEAMS_TABLE_NAME, null, values);
         db.close();
+    }
+
+    public ArrayList<Sport> getAllSports(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorSports = db.rawQuery("SELECT * FROM " + SPORTS_TABLE_NAME, null);
+
+        ArrayList<Sport> sportsArrayList = new ArrayList<>();
+
+        if (cursorSports.moveToFirst()){
+            do {
+                sportsArrayList.add(new Sport(
+                        cursorSports.getString(1),
+                        cursorSports.getString(2)));
+            }while (cursorSports.moveToNext());
+        }
+
+        cursorSports.close();
+        return sportsArrayList;
     }
 
     @Override
