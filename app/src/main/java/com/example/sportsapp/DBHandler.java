@@ -2,9 +2,12 @@ package com.example.sportsapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
     // creating a constant variables for our database.
@@ -16,6 +19,12 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String SPORTS_ID_COL = "id";
     private static final String SPORTS_NAME_COL = "name";
     private static final String SPORTS_IMAGEURL_COL = "imageUrl";
+
+    private static final String LEAGUE_TABLE_NAME = "leagues";
+    private static final String LEAGUE_ID_COL = "id";
+    private static final String LEAGUE_NAME_COL = "name";
+    private static final String LEAGUE_SPORTNAME_COL = "sportName";
+
     private static final String TEAMS_TABLE_NAME = "teams";
     private static final String TEAMS_ID_COL = "id";
     private static final String TEAMS_NAME_COL = "name";
@@ -36,6 +45,12 @@ public class DBHandler extends SQLiteOpenHelper {
         Log.i("database", "created");
         db.execSQL(createSportsTableQuery);
 
+        String createLeagueTableQuery = "CREATE TABLE " + LEAGUE_TABLE_NAME + " ("
+                + LEAGUE_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + LEAGUE_NAME_COL + " TEXT, "
+                + LEAGUE_SPORTNAME_COL + " TEXT)";
+        db.execSQL(createLeagueTableQuery);
+
         String createTeamsTableQuery = "CREATE TABLE " + TEAMS_TABLE_NAME + " ("
                 + TEAMS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TEAMS_NAME_COL + " TEXT, "
@@ -44,6 +59,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
     }
+
     // this method is use to add new sport to our sqlite database.
     public void addNewSport(Sport sport) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -51,9 +67,41 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(SPORTS_ID_COL, sport.id);
         values.put(SPORTS_NAME_COL, sport.name);
         values.put(SPORTS_IMAGEURL_COL, sport.imageUrl);
-        Log.i("database", db.toString());
         db.insert(SPORTS_TABLE_NAME, null, values);
         db.close();
+    }
+
+    public void addNewLeague(League league) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(LEAGUE_ID_COL, league.id);
+        values.put(LEAGUE_NAME_COL, league.name);
+        values.put(LEAGUE_SPORTNAME_COL, league.sportName);
+        db.insert(LEAGUE_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public ArrayList<League> readLeagues(String sportName)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor leaguesCursor = db.rawQuery("SELECT * FROM " + LEAGUE_TABLE_NAME +
+                " WHERE " + LEAGUE_SPORTNAME_COL + " = '" + sportName + "'", null);
+
+        ArrayList<League> result = new ArrayList<>();
+
+        if (leaguesCursor.moveToFirst()) {
+            do {
+                League league = new League();
+                league.id = leaguesCursor.getInt(0);
+                league.name = leaguesCursor.getString(1);
+                league.sportName = leaguesCursor.getString(2);
+                result.add(league);
+            } while (leaguesCursor.moveToNext());
+
+        }
+
+        leaguesCursor.close();
+        return result;
     }
 
     // this method is use to add new team to our sqlite database.
@@ -75,6 +123,7 @@ public class DBHandler extends SQLiteOpenHelper {
 // this method is called to check if the table exists already.
         db.execSQL("DROP TABLE IF EXISTS " + SPORTS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LEAGUE_NAME_COL);
         onCreate(db);
     }
 }

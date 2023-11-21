@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         settings = getPreferences(MODE_PRIVATE);
         editor = settings.edit();
 
-        if (!settings.getBoolean("SPORTS_TABLE_LOADED", false)) {
+        if (!settings.getBoolean("BASE_TABLES_LOADED", false)) {
             populateDatabasesFromAPI();
         }
     }
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
             editor.putString("username", user.getUsername());
             editor.apply();
-            Intent sports = new Intent(MainActivity.this, SportSelection.class);
+            Intent sports = new Intent(MainActivity.this, LeagueSelection.class);
             this.startActivity(sports);
         }
     }
@@ -97,6 +97,12 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             @Override public void run() { _getSports(); }
         }.start();
+
+        new Thread() {
+            @Override public void run() { _getLeagues(); }
+        }.start();
+
+        editor.putBoolean("BASE_TABLES_LOADED", true);
     }
 
     private void _getSports() {
@@ -125,10 +131,41 @@ public class MainActivity extends AppCompatActivity {
                 dbHandler.addNewSport(sport);
             }
 
-            editor.putBoolean("SPORTS_TABLE_LOADED", true);
             editor.apply();
         } catch (JSONException e) {
             Log.d("sport", "Error parsing sport " + e.getMessage());
+        }
+    }
+
+    private void _getLeagues() {
+        String url = "https://thesportsdb.p.rapidapi.com/all_leagues.php";
+        APICallWrapper wrapper = new APICallWrapper();
+        apiHandler.getData(MainActivity.this, url, null, "leagues", wrapper);
+
+        try {
+            wrapper.waitForReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject responseObject;
+        try {
+            responseObject = new JSONObject(wrapper.response);
+            JSONArray responseArray = responseObject.getJSONArray("leagues");
+
+            for (int i=0; i < responseArray.length(); i++) {
+                JSONObject oneObject = responseArray.getJSONObject(i);
+                League league = new League();
+                league.id = oneObject.getInt("idLeague");
+                league.name = oneObject.getString("strLeague");
+                league.sportName = oneObject.getString("strSport");
+
+                dbHandler.addNewLeague(league);
+            }
+
+            editor.apply();
+        } catch (JSONException e) {
+            Log.d("league", "Error parsing league " + e.getMessage());
         }
     }
 }

@@ -43,7 +43,7 @@ public class APIHandler {
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(logTag,"error => "+error.toString());
+                        Log.e(logTag,"API error => "+error.toString());
                     }
                 }
         ) {
