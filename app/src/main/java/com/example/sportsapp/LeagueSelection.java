@@ -35,9 +35,7 @@ public class LeagueSelection extends AppCompatActivity {
         apiHandler = new APIHandler();
 
         Intent intent = getIntent();
-        // TODO: use this once sport selection is set up
-        //sportName = intent.getStringExtra("sport");
-        sportName = "Baseball";
+        sportName = intent.getStringExtra("sportName");
         title.setText(sportName + " Leagues");
 
         leagues = dbHandler.readLeagues(sportName);

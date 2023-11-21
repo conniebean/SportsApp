@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-
     EditText username, password;
     private DBHandler dbHandler;
     private APIHandler apiHandler;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         settings = getPreferences(MODE_PRIVATE);
         editor = settings.edit();
 
-        if (!settings.getBoolean("BASE_TABLES_LOADED", false)) {
+        if (!settings.getBoolean("BASE_TABLES_LOADED", true)) {
             populateDatabasesFromAPI();
         }
     }
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
             editor.putString("username", user.getUsername());
             editor.apply();
-            Intent sports = new Intent(MainActivity.this, LeagueSelection.class);
+            Intent sports = new Intent(MainActivity.this, SportSelection.class);
             this.startActivity(sports);
         }
     }

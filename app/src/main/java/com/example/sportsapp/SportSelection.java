@@ -32,9 +32,9 @@ public class SportSelection extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 sport = (Sport) lv.getItemAtPosition(position);
-//                Intent leagueSelection = new Intent(this, LeagueSelection.class);
-//                leagueSelection.putExtra("sportName", sport.name);
-//                startActivity(leagueSelection);
+                Intent leagueSelection = new Intent(SportSelection.this, LeagueSelection.class);
+                leagueSelection.putExtra("sportName", sport.name);
+                startActivity(leagueSelection);
             }
         });
     }
@@ -55,8 +55,8 @@ public class SportSelection extends AppCompatActivity {
                 startActivity(sportsSelection);
                 break;
             case R.id.leagues:
-//                Intent leagueSelection = new Intent(this, LeagueSelection.class);
-//                startActivity(leagueSelection);
+                Intent leagueSelection = new Intent(this, LeagueSelection.class);
+                startActivity(leagueSelection);
                 break;
 
             case R.id.teams:
