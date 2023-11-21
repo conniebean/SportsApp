@@ -38,7 +38,7 @@ public class SportsListAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (v == null) {
-            v = layoutInflater.inflate(R.layout.list_row, null);
+            v = layoutInflater.inflate(R.layout.list_row_sports, null);
             holder = new ViewHolder();
             holder.uName = (TextView) v.findViewById(R.id.name);
             holder.uImageUrl = (TextView) v.findViewById(R.id.imageUrl);
