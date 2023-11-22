@@ -4,15 +4,6 @@
         android:id="@+id/sports"
         android:title="@string/sports">
     </item>
-    <item
-        android:id="@+id/leagues"
-        android:title="@string/leagues">
-
-    </item>
-    <item
-        android:id="@+id/teams"
-        android:title="@string/teams">
-    </item>
 
     <item
         android:id="@+id/tickets"
