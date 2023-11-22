@@ -54,15 +54,6 @@ public class SportSelection extends AppCompatActivity {
                 Intent sportsSelection = new Intent(this, SportSelection.class);
                 startActivity(sportsSelection);
                 break;
-            case R.id.leagues:
-                Intent leagueSelection = new Intent(this, LeagueSelection.class);
-                startActivity(leagueSelection);
-                break;
-
-            case R.id.teams:
-//                Intent teamSelection = new Intent(this, TeamSelection.class);
-//                startActivity(teamSelection);
-                break;
 
             case R.id.tickets:
 //                Intent ticketSelection = new Intent(this, TicketSelection.class);

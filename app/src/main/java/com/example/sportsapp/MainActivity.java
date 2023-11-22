@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         settings = getPreferences(MODE_PRIVATE);
         editor = settings.edit();
 
-        if (!settings.getBoolean("BASE_TABLES_LOADED", true)) {
+        if (!settings.getBoolean("BASE_TABLES_LOADED", false)) {
             populateDatabasesFromAPI();
         }
     }
