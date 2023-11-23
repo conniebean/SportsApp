@@ -15,6 +15,11 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "sportsAppDB";
     // below int is our database version
     private static final int DB_VERSION = 1;
+
+    private static final String USER_TABLE_NAME = "users";
+    private static final String USER_USERNAME_COL = "username";
+    private static final String USER_PASSWORD_COL = "password";
+
     private static final String SPORTS_TABLE_NAME = "sports";
     private static final String SPORTS_ID_COL = "id";
     private static final String SPORTS_NAME_COL = "name";
@@ -38,11 +43,16 @@ public class DBHandler extends SQLiteOpenHelper {
     // below method is for creating a database by running a sqlite query
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i("database", "created");
+        String createUsersTableQuery = "CREATE TABLE " + USER_TABLE_NAME + " ("
+                + USER_USERNAME_COL + " TEXT PRIMARY KEY, "
+                + USER_PASSWORD_COL + " TEXT)";
+        db.execSQL(createUsersTableQuery);
+
         String createSportsTableQuery = "CREATE TABLE " + SPORTS_TABLE_NAME + " ("
                 + SPORTS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + SPORTS_NAME_COL + " TEXT, "
                 + SPORTS_IMAGEURL_COL + " TEXT)";
-        Log.i("database", "created");
         db.execSQL(createSportsTableQuery);
 
         String createLeagueTableQuery = "CREATE TABLE " + LEAGUE_TABLE_NAME + " ("
@@ -58,6 +68,37 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TEAMS_SPORT_COL + " INTEGER, "
                 + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
+    }
+
+    public void addNewUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_USERNAME_COL, user.getUsername());
+        values.put(USER_PASSWORD_COL, user.getPassword());
+        db.insert(USER_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public ArrayList<User> readUser(String username)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor userCursor = db.rawQuery("SELECT * FROM " + USER_TABLE_NAME +
+                " WHERE " + USER_USERNAME_COL + " = '" + username + "'", null);
+
+        ArrayList<User> result = new ArrayList<>();
+
+        if (userCursor.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setUsername(userCursor.getString(0));
+                user.setPassword(userCursor.getString(1));
+
+                result.add(user);
+            } while (userCursor.moveToNext());
+        }
+
+        userCursor.close();
+        return result;
     }
 
     // this method is use to add new sport to our sqlite database.
