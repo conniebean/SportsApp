@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText username, password;
@@ -44,27 +46,33 @@ public class MainActivity extends AppCompatActivity {
     public void onLogIn(View view) {
         User user = getUserInput();
         if (user != null) {
-            // check if user exists in DB. If so, grab their data to put into app preferences (username, fav teams, tickets) and enter app.
-            // if user doesn't exist, pop up toast with error.
-
-            editor.putString("username", user.getUsername());
-            editor.apply();
-            Intent sports = new Intent(MainActivity.this, SportSelection.class);
-            this.startActivity(sports);
+            ArrayList<User> userList = dbHandler.readUser(user.getUsername());
+            if (userList.size() == 0) {
+                Toast.makeText(getApplicationContext(), "User " + user.getUsername() + " does not exist. Please sign up first.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                editor.putString("username", user.getUsername());
+                editor.apply();
+                Intent sports = new Intent(MainActivity.this, SportSelection.class);
+                this.startActivity(sports);
+            }
         }
     }
 
     public void onSignUp(View view) {
         User user = getUserInput();
         if (user != null) {
-            // check if USERNAME already exists in DB. If it does, pop up toast with error for duplicate username.
-            // If username is available, save new username and password into DB. Add username into preferences and enter app.
-            // some stuff
-
-            editor.putString("username", user.getUsername());
-            editor.apply();
-            Intent sports = new Intent(MainActivity.this, SportSelection.class);
-            this.startActivity(sports);
+            ArrayList<User> userList = dbHandler.readUser(user.getUsername());
+            if (userList.size() == 0) {
+                dbHandler.addNewUser(user);
+                editor.putString("username", user.getUsername());
+                editor.apply();
+                Intent sports = new Intent(MainActivity.this, SportSelection.class);
+                this.startActivity(sports);
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "User " + user.getUsername() + " already exists. Please choose a unique username.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -94,11 +102,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateDatabasesFromAPI() {
         new Thread() {
-            @Override public void run() { _getSports(); }
-        }.start();
-
-        new Thread() {
-            @Override public void run() { _getLeagues(); }
+            @Override public void run() {
+                _getSports();
+                _getLeagues();
+            }
         }.start();
 
         editor.putBoolean("BASE_TABLES_LOADED", true);
@@ -164,4 +171,5 @@ public class MainActivity extends AppCompatActivity {
             Log.d("league", "Error parsing league " + e.getMessage());
         }
     }
+
 }

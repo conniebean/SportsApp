@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class APIHandler {
     private RequestQueue mRequestQueue;
@@ -55,9 +54,12 @@ public class APIHandler {
                 return headers;
             }
             @Override
-            public byte[] getBody() throws AuthFailureError {
+            public Map<String, String> getParams() throws AuthFailureError {
+
+                Log.d(logTag, String.valueOf(params));
                 if (params != null) {
-                    return new JSONObject(params).toString().getBytes();
+                    Log.d(logTag, new JSONObject(params).toString());
+                    return params;
                 }
 
                 return null;

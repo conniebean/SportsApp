@@ -15,6 +15,11 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "sportsAppDB";
     // below int is our database version
     private static final int DB_VERSION = 1;
+
+    private static final String USER_TABLE_NAME = "users";
+    private static final String USER_USERNAME_COL = "username";
+    private static final String USER_PASSWORD_COL = "password";
+
     private static final String SPORTS_TABLE_NAME = "sports";
     private static final String SPORTS_ID_COL = "id";
     private static final String SPORTS_NAME_COL = "name";
@@ -28,7 +33,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TEAMS_TABLE_NAME = "teams";
     private static final String TEAMS_ID_COL = "id";
     private static final String TEAMS_NAME_COL = "name";
-    private static final String TEAMS_IMAGEURL_COL = "imageUrl";
+    private static final String TEAMS_LEAGUES_COL = "leagueName";
     private static final String TEAMS_SPORT_COL = "sportId";
     private static final String TEAMS_FAVOURITE_COL = "favourite";
 
@@ -42,11 +47,16 @@ public class DBHandler extends SQLiteOpenHelper {
     // below method is for creating a database by running a sqlite query
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i("database", "created");
+        String createUsersTableQuery = "CREATE TABLE " + USER_TABLE_NAME + " ("
+                + USER_USERNAME_COL + " TEXT PRIMARY KEY, "
+                + USER_PASSWORD_COL + " TEXT)";
+        db.execSQL(createUsersTableQuery);
+
         String createSportsTableQuery = "CREATE TABLE " + SPORTS_TABLE_NAME + " ("
                 + SPORTS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + SPORTS_NAME_COL + " TEXT, "
                 + SPORTS_IMAGEURL_COL + " TEXT)";
-        Log.i("database", "created");
         db.execSQL(createSportsTableQuery);
 
         String createLeagueTableQuery = "CREATE TABLE " + LEAGUE_TABLE_NAME + " ("
@@ -58,7 +68,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String createTeamsTableQuery = "CREATE TABLE " + TEAMS_TABLE_NAME + " ("
                 + TEAMS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TEAMS_NAME_COL + " TEXT, "
-                + TEAMS_IMAGEURL_COL + " TEXT, "
+                + TEAMS_LEAGUES_COL + " TEXT, "
                 + TEAMS_SPORT_COL + " INTEGER, "
                 + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
@@ -67,6 +77,37 @@ public class DBHandler extends SQLiteOpenHelper {
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + FAVOURITES_TEAM_NAME_COL + " TEXT)";
         db.execSQL(createFavouritesTableQuery);
+    }
+
+    public void addNewUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_USERNAME_COL, user.getUsername());
+        values.put(USER_PASSWORD_COL, user.getPassword());
+        db.insert(USER_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public ArrayList<User> readUser(String username)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor userCursor = db.rawQuery("SELECT * FROM " + USER_TABLE_NAME +
+                " WHERE " + USER_USERNAME_COL + " = '" + username + "'", null);
+
+        ArrayList<User> result = new ArrayList<>();
+
+        if (userCursor.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setUsername(userCursor.getString(0));
+                user.setPassword(userCursor.getString(1));
+
+                result.add(user);
+            } while (userCursor.moveToNext());
+        }
+
+        userCursor.close();
+        return result;
     }
 
     // this method is use to add new sport to our sqlite database.
@@ -119,13 +160,14 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(TEAMS_ID_COL, team.id);
         values.put(TEAMS_NAME_COL, team.name);
-        values.put(TEAMS_IMAGEURL_COL, team.imageUrl);
-        values.put(TEAMS_SPORT_COL, team.sportId);
+        values.put(TEAMS_LEAGUES_COL, team.leagueName);
+        values.put(TEAMS_SPORT_COL, team.sportName);
         values.put(TEAMS_FAVOURITE_COL, team.favourite);
         Log.i("database", db.toString());
         db.insert(TEAMS_TABLE_NAME, null, values);
         db.close();
     }
+
 //change the argument to teams when view is implemented
     public void addNewFavourite(Sport sport){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -150,6 +192,31 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursorFavourites.close();
         return favouritesArrayList;
+    }
+  
+    public ArrayList<Team> readTeams(String leagueName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor teamsCursor = db.rawQuery("SELECT * FROM " + TEAMS_TABLE_NAME +
+                " WHERE " + TEAMS_LEAGUES_COL + " = '" + leagueName + "'", null);
+
+        ArrayList<Team> result = new ArrayList<>();
+
+        if (teamsCursor != null && teamsCursor.moveToFirst()) {
+            do {
+                Team team = new Team();
+                team.id = teamsCursor.getInt(0);
+                team.name = teamsCursor.getString(1);
+                team.leagueName = teamsCursor.getString(2);
+                team.sportName = teamsCursor.getString(3);
+                result.add(team);
+            } while (teamsCursor.moveToNext());
+        }
+
+        if (teamsCursor != null) {
+            teamsCursor.close(); // Close the cursor if it's not null
+        }
+
+        return result;
     }
 
     public ArrayList<Sport> getAllSports(){
