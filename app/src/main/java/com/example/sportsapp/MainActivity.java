@@ -164,4 +164,5 @@ public class MainActivity extends AppCompatActivity {
             Log.d("league", "Error parsing league " + e.getMessage());
         }
     }
+
 }

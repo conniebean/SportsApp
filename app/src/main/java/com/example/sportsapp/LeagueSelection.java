@@ -44,9 +44,9 @@ public class LeagueSelection extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO
-                // Intent teamSelection = new Intent(LeagueSelection.this, TeamSelection.class);
-                // teamSelection.putExtra("league", leagues.get(position).name);
-                // this.startActivity(team);
+                Intent teamSelection = new Intent(LeagueSelection.this, TeamSelection.class);
+                teamSelection.putExtra("league", leagues.get(position).name);
+                startActivity(teamSelection);
 
                 Toast.makeText(getApplicationContext(), "League Selected: " + leagues.get(position).name, Toast.LENGTH_SHORT).show();
             }
