@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/btnRemove"
+        android:onClick="clickViewTeams"
         android:layout_marginStart="-143dp"
         android:text="View Team" />
 
@@ -30,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:onClick="clickRemoveTeam"
         android:text="Remove" />
 
 

@@ -2,9 +2,11 @@ package com.example.sportsapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -15,16 +17,32 @@ import java.util.ArrayList;
 public class FavouritesView extends AppCompatActivity {
 
     DBHandler dbHandler;
+    ListView lv;
+    ArrayList favouritesList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites_view);
         dbHandler = new DBHandler(FavouritesView.this);
 
-        ArrayList favouritesList = dbHandler.getUserFavourites();
-        final ListView lv = (ListView) findViewById(R.id.favourites_list);
+        favouritesList = dbHandler.getUserFavourites();
+        lv = (ListView) findViewById(R.id.favourites_list);
 
         lv.setAdapter(new FavouritesListAdapter(this, favouritesList));
+    }
+
+    public void clickViewTeams(View view){
+        //change this to team info when it's created
+        Intent viewTeamInfo = new Intent(this, TeamSelection.class);
+        startActivity(viewTeamInfo);
+    }
+
+    public void clickRemoveTeam(View view){
+        int position = lv.getPositionForView(view);
+        Favourites item = (Favourites) lv.getItemAtPosition(position);
+        dbHandler.removeTeamFromFavourites(item.teamName);
+        Intent favourites = new Intent(this, FavouritesView.class);
+        startActivity(favourites);
     }
 
     @Override

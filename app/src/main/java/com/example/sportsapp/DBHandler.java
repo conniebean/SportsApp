@@ -168,7 +168,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-//change the argument to teams when view is implemented
+//change the argument to team info when view is implemented
     public void addNewFavourite(Sport sport){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -192,6 +192,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursorFavourites.close();
         return favouritesArrayList;
+    }
+
+    public void removeTeamFromFavourites(String teamName){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(FAVOURITES_TABLE_NAME, "teamName=?", new String[]{teamName});
     }
   
     public ArrayList<Team> readTeams(String leagueName) {
