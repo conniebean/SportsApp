@@ -197,6 +197,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void removeTeamFromFavourites(String teamName){
         SQLiteDatabase db = getWritableDatabase();
         db.delete(FAVOURITES_TABLE_NAME, "teamName=?", new String[]{teamName});
+        db.close();
     }
   
     public ArrayList<Team> readTeams(String leagueName) {
