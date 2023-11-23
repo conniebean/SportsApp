@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -14,31 +12,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class SportSelection extends AppCompatActivity {
-    Sport sport;
+public class FavouritesView extends AppCompatActivity {
+
     DBHandler dbHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sport_selection);
+        setContentView(R.layout.activity_favourites_view);
+        dbHandler = new DBHandler(FavouritesView.this);
 
-        dbHandler = new DBHandler(SportSelection.this);
-        ArrayList sportsList = dbHandler.getAllSports();
-        final ListView lv = (ListView) findViewById(R.id.sports_list);
+        ArrayList favouritesList = dbHandler.getUserFavourites();
+        final ListView lv = (ListView) findViewById(R.id.favourites_list);
 
-        lv.setAdapter(new SportsListAdapter(this, sportsList));
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                sport = (Sport) lv.getItemAtPosition(position);
-                Intent leagueSelection = new Intent(SportSelection.this, LeagueSelection.class);
-                leagueSelection.putExtra("sportName", sport.name);
-                // leaving this here to remind myself to use on teams view and swap out sport information.
-//                dbHandler.addNewFavourite(sport);
-                startActivity(leagueSelection);
-            }
-        });
+        lv.setAdapter(new FavouritesListAdapter(this, favouritesList));
     }
 
     @Override
@@ -72,4 +58,3 @@ public class SportSelection extends AppCompatActivity {
         return true;
     }
 }
-

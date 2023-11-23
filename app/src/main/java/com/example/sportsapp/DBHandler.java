@@ -37,6 +37,10 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TEAMS_SPORT_COL = "sportId";
     private static final String TEAMS_FAVOURITE_COL = "favourite";
 
+    private static final String FAVOURITES_TABLE_NAME = "favourites";
+    private static final String FAVOURITES_ID_COL = "id";
+    private static final String FAVOURITES_TEAM_NAME_COL = "teamName";
+
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -68,6 +72,11 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TEAMS_SPORT_COL + " INTEGER, "
                 + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
+
+        String createFavouritesTableQuery = "CREATE TABLE " + FAVOURITES_TABLE_NAME + " ("
+                + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + FAVOURITES_TEAM_NAME_COL + " TEXT)";
+        db.execSQL(createFavouritesTableQuery);
     }
 
     public void addNewUser(User user) {
@@ -158,6 +167,33 @@ public class DBHandler extends SQLiteOpenHelper {
         db.insert(TEAMS_TABLE_NAME, null, values);
         db.close();
     }
+
+//change the argument to teams when view is implemented
+    public void addNewFavourite(Sport sport){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FAVOURITES_TEAM_NAME_COL, sport.name);
+        db.insert(FAVOURITES_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public ArrayList<Favourites> getUserFavourites(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME, null);
+
+        ArrayList<Favourites> favouritesArrayList = new ArrayList<>();
+
+        if (cursorFavourites.moveToFirst()){
+            do {
+                favouritesArrayList.add(new Favourites(
+                        cursorFavourites.getString(1)));
+            }while (cursorFavourites.moveToNext());
+        }
+
+        cursorFavourites.close();
+        return favouritesArrayList;
+    }
+  
     public ArrayList<Team> readTeams(String leagueName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor teamsCursor = db.rawQuery("SELECT * FROM " + TEAMS_TABLE_NAME +
@@ -183,7 +219,6 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
-
     public ArrayList<Sport> getAllSports(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursorSports = db.rawQuery("SELECT * FROM " + SPORTS_TABLE_NAME, null);
@@ -207,7 +242,8 @@ public class DBHandler extends SQLiteOpenHelper {
 // this method is called to check if the table exists already.
         db.execSQL("DROP TABLE IF EXISTS " + SPORTS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + LEAGUE_NAME_COL);
+        db.execSQL("DROP TABLE IF EXISTS " + LEAGUE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + FAVOURITES_TABLE_NAME);
         onCreate(db);
     }
 }

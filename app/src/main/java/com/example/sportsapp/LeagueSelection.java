@@ -91,8 +91,8 @@ public class LeagueSelection extends AppCompatActivity {
 //                startActivity(ticketSelection);
                 break;
             case R.id.favourites:
-//                Intent favouritesView = new Intent(this, Favourites.class);
-//                startActivity(favouritesView);
+                Intent favouritesView = new Intent(this, FavouritesView.class);
+                startActivity(favouritesView);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
