@@ -94,11 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateDatabasesFromAPI() {
         new Thread() {
-            @Override public void run() { _getSports(); }
-        }.start();
-
-        new Thread() {
-            @Override public void run() { _getLeagues(); }
+            @Override public void run() {
+                _getSports();
+                _getLeagues();
+            }
         }.start();
 
         editor.putBoolean("BASE_TABLES_LOADED", true);
@@ -164,4 +163,5 @@ public class MainActivity extends AppCompatActivity {
             Log.d("league", "Error parsing league " + e.getMessage());
         }
     }
+
 }
