@@ -120,7 +120,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<Team> readTeams(String leagueName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor teamsCursor = db.rawQuery("SELECT * FROM " + TEAMS_TABLE_NAME +
-                " WHERE " + TEAMS_SPORT_COL + " = '" + leagueName + "'", null);
+                " WHERE " + TEAMS_LEAGUES_COL + " = '" + leagueName + "'", null);
 
         ArrayList<Team> result = new ArrayList<>();
 

@@ -51,63 +51,6 @@ public class TeamSelection extends AppCompatActivity {
 
 
         teams = dbHandler.readTeams(leagueName);
-        if (teams.size() == 0) {
-            new GetTeamsTask().execute();
-        } else {
-            populateListView();
-        }
-    }
-    private class GetTeamsTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            APICallWrapper teamsWrapper = new APICallWrapper();
-            _getTeams(teamsWrapper);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            populateListView();
-        }
-    }
-
-    private void _getTeams(APICallWrapper teamsWrapper) {
-        String url = "https://thesportsdb.p.rapidapi.com/search_all_teams.php?l=" + leagueName;
-        Map<String, String> headers = new HashMap<>();
-        headers.put("l", leagueName);
-        APICallWrapper wrapper = new APICallWrapper();
-        apiHandler.getData( TeamSelection.this, url, (HashMap) headers, "teams", wrapper);
-
-        try {
-            wrapper.waitForReady();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject responseObject;
-        try {
-            responseObject = new JSONObject(wrapper.response);
-            JSONArray responseArray = responseObject.getJSONArray("teams");
-
-            for (int i=0; i < responseArray.length(); i++) {
-                JSONObject oneObject = responseArray.getJSONObject(i);
-                Team team = new Team();
-                team.id = oneObject.getInt("idTeam");
-                team.name = oneObject.getString("strTeam");
-                team.leagueName = oneObject.getString("strLeague");
-                team.sportName = oneObject.getString("strSport");
-
-                dbHandler.addNewTeam(team);
-            }
-
-            editor.apply();
-        } catch (JSONException e) {
-            Log.d("team", "Error parsing team " + e.getMessage());
-        }
-        teamsWrapper.setReady();
-    }
-    private void populateListView(){
         final ListView lv = findViewById(R.id.teams_list);
 
         adapter = new CustomListAdapterTeam(this, teams);
@@ -123,5 +66,7 @@ public class TeamSelection extends AppCompatActivity {
                 }
             }
         });
+
     }
+
 }
