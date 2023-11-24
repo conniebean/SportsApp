@@ -1,3 +1,9 @@
+// -----------------------------------
+// Class: CustomListAdapterLeague
+// Author: Jessica Cao
+// Description: Adapter for the custom list view for leagues.
+// -----------------------------------
+
 package com.example.sportsapp;
 
 import android.content.Context;

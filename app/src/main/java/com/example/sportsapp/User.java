@@ -1,3 +1,9 @@
+// -----------------------------------
+// Class: User
+// Author: Jessica Cao
+// Description: Class for the user who will sign up and log in to the app.
+// -----------------------------------
+
 package com.example.sportsapp;
 
 public class User {

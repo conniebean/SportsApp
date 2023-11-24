@@ -1,3 +1,9 @@
+// -----------------------------------
+// Class: LeagueSelection
+// Author: Jessica Cao
+// Description: Class for the LeagueSelection view.
+// -----------------------------------
+
 package com.example.sportsapp;
 
 import android.content.Intent;
@@ -103,10 +109,8 @@ public class LeagueSelection extends AppCompatActivity {
 
     private void _getTeams(String leagueName) {
         String url = "https://thesportsdb.p.rapidapi.com/search_all_teams.php?l=" + leagueName;
-        Map<String, String> headers = new HashMap<>();
-        headers.put("l", leagueName);
         APICallWrapper wrapper = new APICallWrapper();
-        apiHandler.getData( LeagueSelection.this, url, (HashMap) headers, "teams", wrapper);
+        apiHandler.getData( LeagueSelection.this, url, null, "teams", wrapper);
 
         try {
             wrapper.waitForReady();
@@ -124,8 +128,11 @@ public class LeagueSelection extends AppCompatActivity {
                 Team team = new Team();
                 team.id = oneObject.getInt("idTeam");
                 team.name = oneObject.getString("strTeam");
+                team.teamLogoUrl = oneObject.getString("strTeamLogo");
                 team.leagueName = oneObject.getString("strLeague");
                 team.sportName = oneObject.getString("strSport");
+                team.country = oneObject.getString("strCountry");
+                team.description = oneObject.getString("strDescriptionEN");
 
                 dbHandler.addNewTeam(team);
             }

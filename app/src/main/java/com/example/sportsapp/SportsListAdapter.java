@@ -1,11 +1,15 @@
 package com.example.sportsapp;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,7 +45,7 @@ public class SportsListAdapter extends BaseAdapter {
             v = layoutInflater.inflate(R.layout.list_row_sports, null);
             holder = new ViewHolder();
             holder.uName = (TextView) v.findViewById(R.id.name);
-            holder.uImageUrl = (TextView) v.findViewById(R.id.imageUrl);
+            holder.uImageUrl = (ImageView) v.findViewById(R.id.imageViewSport);
 
             v.setTag(holder);
         }
@@ -50,12 +54,12 @@ public class SportsListAdapter extends BaseAdapter {
             holder = (ViewHolder) v.getTag();
         }
         holder.uName.setText(listData.get(position).name);
-        holder.uImageUrl.setText(listData.get(position).imageUrl);
+        Picasso.get().load(listData.get(position).imageUrl).into(holder.uImageUrl);
         return v;
     }
 
     static class ViewHolder {
         TextView uName;
-        TextView uImageUrl;
+        ImageView uImageUrl;
     }
 }

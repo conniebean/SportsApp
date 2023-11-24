@@ -60,13 +60,64 @@ public class TeamSelection extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Team selectedTeam = teams.get(position);
+
                 if (selectedTeam != null) {
-                    String teamName = selectedTeam.name;
-                    Toast.makeText(getApplicationContext(), "Team Selected: " + teamName, Toast.LENGTH_SHORT).show();
+                    ArrayList<Player> players = dbHandler.readPlayers(selectedTeam.id);
+
+                    Toast.makeText(getApplicationContext(), "Team Selected: " + selectedTeam.name, Toast.LENGTH_SHORT).show();
+                    if (players.size() == 0) {
+                        new Thread() {
+                            @Override public void run() { _getPlayers(selectedTeam.id); }
+                        }.start();
+                    }
+                    else {
+                        Intent teamInfo = new Intent(TeamSelection.this, TeamInfo.class);
+                        teamInfo.putExtra("teamId", selectedTeam.id);
+                        startActivity(teamInfo);
+                    }
                 }
             }
         });
 
     }
 
+    private void _getPlayers(int teamId) {
+        String url = "https://thesportsdb.p.rapidapi.com/lookup_all_players.php?id=" + teamId;
+        APICallWrapper wrapper = new APICallWrapper();
+        apiHandler.getData( TeamSelection.this, url, null, "players", wrapper);
+
+        try {
+            wrapper.waitForReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject responseObject;
+        try {
+            responseObject = new JSONObject(wrapper.response);
+            JSONArray responseArray = responseObject.getJSONArray("player");
+
+            for (int i=0; i < responseArray.length(); i++) {
+                JSONObject oneObject = responseArray.getJSONObject(i);
+                Player player = new Player();
+                player.id = oneObject.getInt("idPlayer");
+                player.teamId = oneObject.getInt("idTeam");
+                player.name = oneObject.getString("strPlayer");
+                player.nationality = oneObject.getString("strNationality");
+                player.height = oneObject.getString("strHeight");
+                player.thumbUrl = oneObject.getString("strThumb");
+                player.position = oneObject.getString("strPosition");
+                player.status = oneObject.getString("strStatus");
+
+                dbHandler.addNewPlayer(player);
+            }
+
+            Intent teamInfo = new Intent(TeamSelection.this, TeamInfo.class);
+            teamInfo.putExtra("teamId", teamId);
+            startActivity(teamInfo);
+
+        } catch (JSONException e) {
+            Log.d("team", "Error parsing team " + e.getMessage());
+        }
+    }
 }

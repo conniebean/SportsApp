@@ -1,3 +1,11 @@
+// -----------------------------------
+// Class: APICallWrapper
+// Author: Jessica Cao
+// Description: Class for handling and returning API calls and responses.
+// This class uses the wait functionality to make sure the call is ready before
+// accessing the response.
+// -----------------------------------
+
 package com.example.sportsapp;
 
 public class APICallWrapper {

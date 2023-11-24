@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         dbHandler = new DBHandler(MainActivity.this);
         apiHandler = new APIHandler();
 
-        settings = getPreferences(MODE_PRIVATE);
+        settings = getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
         editor = settings.edit();
 
         if (!settings.getBoolean("BASE_TABLES_LOADED", false)) {
