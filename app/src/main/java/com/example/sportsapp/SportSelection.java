@@ -1,13 +1,18 @@
 package com.example.sportsapp;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +20,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class SportSelection extends AppCompatActivity {
+    TextView sportTitle;
     Sport sport;
     DBHandler dbHandler;
+    SharedPreferences settings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sport_selection);
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+
+        sportTitle = findViewById(R.id.textViewSportsTitle);
+        String username = settings.getString("username", "user");
+        Log.i("settings", String.valueOf(settings.contains("username")));
+        sportTitle.setText("Welcome " + username + "!");
 
         dbHandler = new DBHandler(SportSelection.this);
         ArrayList sportsList = dbHandler.getAllSports();

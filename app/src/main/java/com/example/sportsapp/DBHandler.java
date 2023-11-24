@@ -1,3 +1,10 @@
+// -----------------------------------
+// Class: DBHandler
+// Author: Jessica Cao, Connie Kennedy, Ava Schembri-Kresss
+// Description: Handler for the SQLite database.
+// -----------------------------------
+
+
 package com.example.sportsapp;
 
 import android.content.ContentValues;
@@ -33,9 +40,22 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TEAMS_TABLE_NAME = "teams";
     private static final String TEAMS_ID_COL = "id";
     private static final String TEAMS_NAME_COL = "name";
+    private static final String TEAMS_LOGOURL_COL = "teamLogoURL";
     private static final String TEAMS_LEAGUES_COL = "leagueName";
-    private static final String TEAMS_SPORT_COL = "sportId";
+    private static final String TEAMS_SPORT_COL = "sportName";
+    private static final String TEAMS_DESCRIPTION_COL = "description";
+    private static final String TEAMS_COUNTRY_COL = "country";
     private static final String TEAMS_FAVOURITE_COL = "favourite";
+
+    private static final String PLAYERS_TABLE_NAME = "players";
+    private static final String PLAYERS_ID_COL = "id";
+    private static final String PLAYERS_TEAMID_COL = "teamId";
+    private static final String PLAYERS_NAME_COL = "name";
+    private static final String PLAYERS_NATIONALITY_COL = "nationality";
+    private static final String PLAYERS_HEIGHT_COL = "height";
+    private static final String PLAYERS_THUMBURL_COL = "thumbUrl";
+    private static final String PLAYERS_POSITION_COL = "position";
+    private static final String PLAYERS_STATUS_COL = "status";
 
     private static final String FAVOURITES_TABLE_NAME = "favourites";
     private static final String FAVOURITES_ID_COL = "id";
@@ -68,10 +88,24 @@ public class DBHandler extends SQLiteOpenHelper {
         String createTeamsTableQuery = "CREATE TABLE " + TEAMS_TABLE_NAME + " ("
                 + TEAMS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TEAMS_NAME_COL + " TEXT, "
+                + TEAMS_LOGOURL_COL + " TEXT, "
                 + TEAMS_LEAGUES_COL + " TEXT, "
-                + TEAMS_SPORT_COL + " INTEGER, "
+                + TEAMS_SPORT_COL + " TEXT, "
+                + TEAMS_DESCRIPTION_COL + " TEXT, "
+                + TEAMS_COUNTRY_COL + " TEXT, "
                 + TEAMS_FAVOURITE_COL + " BOOLEAN)";
         db.execSQL(createTeamsTableQuery);
+
+        String createPlayersTableQuery = "CREATE TABLE " + PLAYERS_TABLE_NAME + " ("
+                + PLAYERS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + PLAYERS_TEAMID_COL + " INTEGER, "
+                + PLAYERS_NAME_COL + " TEXT, "
+                + PLAYERS_NATIONALITY_COL + " TEXT, "
+                + PLAYERS_HEIGHT_COL + " TEXT, "
+                + PLAYERS_THUMBURL_COL + " TEXT, "
+                + PLAYERS_POSITION_COL + " TEXT, "
+                + PLAYERS_STATUS_COL + " TEXT)";
+        db.execSQL(createPlayersTableQuery);
 
         String createFavouritesTableQuery = "CREATE TABLE " + FAVOURITES_TABLE_NAME + " ("
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -79,6 +113,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(createFavouritesTableQuery);
     }
 
+    // Author: Jessica Cao
     public void addNewUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -88,6 +123,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Author: Jessica Cao
     public ArrayList<User> readUser(String username)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -110,7 +146,6 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
-    // this method is use to add new sport to our sqlite database.
     public void addNewSport(Sport sport) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -121,6 +156,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Author: Jessica Cao
     public void addNewLeague(League league) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -131,6 +167,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Author: Jessica Cao
     public ArrayList<League> readLeagues(String sportName)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -154,14 +191,16 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
-    // this method is use to add new team to our sqlite database.
     public void addNewTeam(Team team) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TEAMS_ID_COL, team.id);
         values.put(TEAMS_NAME_COL, team.name);
+        values.put(TEAMS_LOGOURL_COL, team.teamLogoUrl);
         values.put(TEAMS_LEAGUES_COL, team.leagueName);
         values.put(TEAMS_SPORT_COL, team.sportName);
+        values.put(TEAMS_DESCRIPTION_COL, team.description);
+        values.put(TEAMS_COUNTRY_COL, team.country);
         values.put(TEAMS_FAVOURITE_COL, team.favourite);
         Log.i("database", db.toString());
         db.insert(TEAMS_TABLE_NAME, null, values);
@@ -212,8 +251,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 Team team = new Team();
                 team.id = teamsCursor.getInt(0);
                 team.name = teamsCursor.getString(1);
-                team.leagueName = teamsCursor.getString(2);
-                team.sportName = teamsCursor.getString(3);
+                team.leagueName = teamsCursor.getString(3);
+                team.sportName = teamsCursor.getString(4);
                 result.add(team);
             } while (teamsCursor.moveToNext());
         }
@@ -225,6 +264,36 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    // Author: Jessica Cao
+    public ArrayList<Team> readTeamByID(int teamID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor teamsCursor = db.rawQuery("SELECT * FROM " + TEAMS_TABLE_NAME +
+                " WHERE " + TEAMS_ID_COL + " = '" + teamID + "'", null);
+
+        ArrayList<Team> result = new ArrayList<>();
+
+        if (teamsCursor != null && teamsCursor.moveToFirst()) {
+            do {
+                Team team = new Team();
+                team.id = teamsCursor.getInt(0);
+                team.name = teamsCursor.getString(1);
+                team.teamLogoUrl = teamsCursor.getString(2);
+                team.leagueName = teamsCursor.getString(3);
+                team.sportName = teamsCursor.getString(4);
+                team.description = teamsCursor.getString(5);
+                team.country = teamsCursor.getString(6);
+                result.add(team);
+            } while (teamsCursor.moveToNext());
+        }
+
+        if (teamsCursor != null) {
+            teamsCursor.close(); // Close the cursor if it's not null
+        }
+
+        return result;
+    }
+
+    // Author: Jessica Cao
     public ArrayList<Sport> getAllSports(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursorSports = db.rawQuery("SELECT * FROM " + SPORTS_TABLE_NAME, null);
@@ -243,12 +312,61 @@ public class DBHandler extends SQLiteOpenHelper {
         return sportsArrayList;
     }
 
+    // Author: Jessica Cao
+    public void addNewPlayer(Player player) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(PLAYERS_ID_COL, player.id);
+        values.put(PLAYERS_TEAMID_COL, player.teamId);
+        values.put(PLAYERS_NAME_COL, player.name);
+        values.put(PLAYERS_NATIONALITY_COL, player.nationality);
+        values.put(PLAYERS_HEIGHT_COL, player.height);
+        values.put(PLAYERS_THUMBURL_COL, player.thumbUrl);
+        values.put(PLAYERS_POSITION_COL, player.position);
+        values.put(PLAYERS_STATUS_COL, player.status);
+        Log.i("database", db.toString());
+        db.insert(PLAYERS_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    // Author: Jessica Cao
+    public ArrayList<Player> readPlayers(int teamId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor playersCursor = db.rawQuery("SELECT * FROM " + PLAYERS_TABLE_NAME +
+                " WHERE " + PLAYERS_TEAMID_COL + " = '" + teamId + "'", null);
+
+        ArrayList<Player> result = new ArrayList<>();
+
+        if (playersCursor != null && playersCursor.moveToFirst()) {
+            do {
+                Player player = new Player();
+                player.id = playersCursor.getInt(0);
+                player.teamId = playersCursor.getInt(1);
+                player.name = playersCursor.getString(2);
+                player.nationality = playersCursor.getString(3);
+                player.height = playersCursor.getString(4);
+                player.thumbUrl = playersCursor.getString(5);
+                player.position = playersCursor.getString(6);
+                player.status = playersCursor.getString(7);
+                result.add(player);
+            } while (playersCursor.moveToNext());
+        }
+
+        if (playersCursor != null) {
+            playersCursor.close(); // Close the cursor if it's not null
+        }
+
+        return result;
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.
         db.execSQL("DROP TABLE IF EXISTS " + SPORTS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + LEAGUE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PLAYERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + FAVOURITES_TABLE_NAME);
         onCreate(db);
     }

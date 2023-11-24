@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_toEndOf="@id/imageViewPlayer"
+        android:layout_alignTop="@id/imageViewPlayer"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/playerStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_toEndOf="@id/imageViewPlayer"
+        android:layout_below="@id/name"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+    <TextView
+        android:id="@+id/playerPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_toEndOf="@id/imageViewPlayer"
+        android:layout_below="@id/playerStatus"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+    <TextView
+        android:id="@+id/playerHeight"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/playerNationality"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/playerNationality"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/name"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/imageViewPlayer"
+        android:layout_width="71dp"
+        android:layout_height="71dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+</RelativeLayout>

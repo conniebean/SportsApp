@@ -1,4 +1,11 @@
+// -----------------------------------
+// Class: APIHandler
+// Author: Jessica Cao
+// Description: Class for handling API calls.
+// -----------------------------------
+
 package com.example.sportsapp;
+
 import android.content.Context;
 import android.util.Log;
 

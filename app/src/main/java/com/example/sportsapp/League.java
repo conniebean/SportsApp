@@ -1,3 +1,9 @@
+// -----------------------------------
+// Class: League
+// Author: Jessica Cao
+// Description: Class for a sport league.
+// -----------------------------------
+
 package com.example.sportsapp;
 
 public class League {
