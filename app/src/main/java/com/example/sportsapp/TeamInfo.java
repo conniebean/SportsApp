@@ -103,7 +103,11 @@ public class TeamInfo extends AppCompatActivity {
                 game.gameName = oneObject.getString("strEvent");
                 game.date = oneObject.getString("dateEvent");
                 game.time = oneObject.getString("strTime");
-                game.venue = oneObject.getString("strVenue");
+                String venue = oneObject.getString("strVenue");
+                if (venue == null || venue == "null" || venue.isEmpty()) {
+                    venue = "No Venue Information";
+                }
+                game.venue = venue;
                 game.country = oneObject.getString("strCountry");
                 game.status = oneObject.getString("strStatus");
                 game.thumbUrl = oneObject.getString("strThumb");

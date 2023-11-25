@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/gameName"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/imageViewGame"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
@@ -19,7 +19,7 @@
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/gameName"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
@@ -28,7 +28,7 @@
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/date"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
@@ -37,9 +37,9 @@
     <TextView
         android:id="@+id/country"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/imageViewGame"
+        android:layout_alignBottom="@id/date"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:textColor="@color/white"
@@ -48,9 +48,8 @@
     <TextView
         android:id="@+id/venue"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/country"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:textColor="@color/white"
@@ -58,9 +57,9 @@
     <TextView
         android:id="@+id/gameStatus"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/venue"
+        android:layout_below="@id/country"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:textColor="@color/white"
