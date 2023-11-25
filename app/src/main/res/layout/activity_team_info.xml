@@ -85,6 +85,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:text="Games"
+      android:onClick="goToGames"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.483"
       app:layout_constraintStart_toEndOf="@+id/editTextDescription"

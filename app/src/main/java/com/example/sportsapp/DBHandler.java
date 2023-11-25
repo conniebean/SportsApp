@@ -57,6 +57,17 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String PLAYERS_POSITION_COL = "position";
     private static final String PLAYERS_STATUS_COL = "status";
 
+    private static final String GAMES_TABLE_NAME = "games";
+    private static final String GAMES_ID_COL = "id";
+    private static final String GAMES_TEAMID_COL = "teamId";
+    private static final String GAMES_NAME_COL = "name";
+    private static final String GAMES_DATE_COL = "date";
+    private static final String GAMES_TIME_COL = "time";
+    private static final String GAMES_VENUE_COL = "venue";
+    private static final String GAMES_COUNTRY_COL = "country";
+    private static final String GAMES_STATUS_COL = "status";
+    private static final String GAMES_THUMBURL_COL = "thumbUrl";
+
     private static final String FAVOURITES_TABLE_NAME = "favourites";
     private static final String FAVOURITES_ID_COL = "id";
     private static final String FAVOURITES_TEAM_NAME_COL = "teamName";
@@ -106,6 +117,18 @@ public class DBHandler extends SQLiteOpenHelper {
                 + PLAYERS_POSITION_COL + " TEXT, "
                 + PLAYERS_STATUS_COL + " TEXT)";
         db.execSQL(createPlayersTableQuery);
+
+        String createGamesTableQuery = "CREATE TABLE " + GAMES_TABLE_NAME + " ("
+                + GAMES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + GAMES_TEAMID_COL + " INTEGER, "
+                + GAMES_NAME_COL + " TEXT, "
+                + GAMES_DATE_COL + " TEXT, "
+                + GAMES_TIME_COL + " TEXT, "
+                + GAMES_VENUE_COL + " TEXT, "
+                + GAMES_COUNTRY_COL + " TEXT, "
+                + GAMES_STATUS_COL + " TEXT, "
+                + GAMES_THUMBURL_COL + " TEXT)";
+        db.execSQL(createGamesTableQuery);
 
         String createFavouritesTableQuery = "CREATE TABLE " + FAVOURITES_TABLE_NAME + " ("
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -359,6 +382,54 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    // Author: Jessica Cao
+    public void addNewGame(Game game) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(GAMES_ID_COL, game.id);
+        values.put(GAMES_TEAMID_COL, game.teamId);
+        values.put(GAMES_NAME_COL, game.gameName);
+        values.put(GAMES_DATE_COL, game.date);
+        values.put(GAMES_TIME_COL, game.time);
+        values.put(GAMES_VENUE_COL, game.venue);
+        values.put(GAMES_COUNTRY_COL, game.country);
+        values.put(GAMES_STATUS_COL, game.status);
+        values.put(GAMES_THUMBURL_COL, game.thumbUrl);
+        Log.i("database", db.toString());
+        db.insert(GAMES_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    // Author: Jessica Cao
+    public ArrayList<Game> readGames(int teamId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor gamesCursor = db.rawQuery("SELECT * FROM " + GAMES_TABLE_NAME +
+                " WHERE " + GAMES_TEAMID_COL + " = '" + teamId + "'", null);
+
+        ArrayList<Game> result = new ArrayList<>();
+
+        if (gamesCursor != null && gamesCursor.moveToFirst()) {
+            do {
+                Game game = new Game();
+                game.id = gamesCursor.getInt(0);
+                game.teamId = gamesCursor.getInt(1);
+                game.gameName = gamesCursor.getString(2);
+                game.date = gamesCursor.getString(3);
+                game.time = gamesCursor.getString(4);
+                game.venue = gamesCursor.getString(5);
+                game.country = gamesCursor.getString(6);
+                game.status = gamesCursor.getString(7);
+                game.thumbUrl = gamesCursor.getString(8);
+                result.add(game);
+            } while (gamesCursor.moveToNext());
+        }
+
+        if (gamesCursor != null) {
+            gamesCursor.close(); // Close the cursor if it's not null
+        }
+
+        return result;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -368,6 +439,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + LEAGUE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PLAYERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + FAVOURITES_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
         onCreate(db);
     }
 }

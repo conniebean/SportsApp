@@ -117,7 +117,7 @@ public class TeamSelection extends AppCompatActivity {
             startActivity(teamInfo);
 
         } catch (JSONException e) {
-            Log.d("team", "Error parsing team " + e.getMessage());
+            Log.d("player", "Error parsing player " + e.getMessage());
         }
     }
 }
