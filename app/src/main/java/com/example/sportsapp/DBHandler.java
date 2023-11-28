@@ -72,6 +72,16 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String FAVOURITES_ID_COL = "id";
     private static final String FAVOURITES_TEAM_NAME_COL = "teamName";
 
+    private static final String TICKETS_TABLE_NAME = "tickets";
+    private static final String TICKETS_ID_COL = "id";
+    private static final String TICKETS_USER_NAME = "name";
+    private static final String TICKETS_USER_EMAIL = "email";
+    private static final String TICKETS_PRICE = "ticket_price";
+    private static final String TICKETS_TICKET_QUANTITY = "num_of_tickets";
+    private static final String TICKETS_TOTAL = "total";
+    private static final String TICKETS_GAME_ID = "game_id";
+
+
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -134,6 +144,17 @@ public class DBHandler extends SQLiteOpenHelper {
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + FAVOURITES_TEAM_NAME_COL + " TEXT)";
         db.execSQL(createFavouritesTableQuery);
+
+        String createTicketsTableQuery = "CREATE TABLE " + TICKETS_TABLE_NAME + " ("
+                + TICKETS_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + TICKETS_USER_NAME + " TEXT, "
+                + TICKETS_USER_EMAIL + " TEXT, "
+                + TICKETS_PRICE + " DOUBLE, "
+                + TICKETS_TICKET_QUANTITY + " INTEGER, "
+                + TICKETS_TOTAL + " DOUBLE, "
+                + TICKETS_GAME_ID + " INTEGER)";
+        db.execSQL(createTicketsTableQuery);
+
     }
 
     // Author: Jessica Cao
@@ -168,6 +189,7 @@ public class DBHandler extends SQLiteOpenHelper {
         userCursor.close();
         return result;
     }
+
 
     public void addNewSport(Sport sport) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -214,6 +236,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    //Author: Ava Schembri-Kress
     public void addNewTeam(Team team) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -261,7 +284,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.delete(FAVOURITES_TABLE_NAME, "teamName=?", new String[]{teamName});
         db.close();
     }
-  
+
+    //Author: Ava Schembri-Kress
     public ArrayList<Team> readTeams(String leagueName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor teamsCursor = db.rawQuery("SELECT * FROM " + TEAMS_TABLE_NAME +
@@ -431,6 +455,22 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    //Author: Ava Schembri-Kress
+    public void addNewTicket(Ticket ticket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TICKETS_ID_COL , ticket.id);
+        values.put(TICKETS_USER_NAME , ticket.userName);
+        values.put(TICKETS_USER_EMAIL , ticket.userEmail);
+        values.put(TICKETS_PRICE, (ticket.ticketPrice));
+        values.put(TICKETS_TICKET_QUANTITY, ticket.ticketQuantity);
+        values.put(TICKETS_TOTAL, ticket.total);
+        values.put(TICKETS_GAME_ID , ticket.gameId);
+        Log.i("database", db.toString());
+        db.insert(TICKETS_TABLE_NAME, null, values);
+        db.close();
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.
@@ -440,6 +480,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + PLAYERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + FAVOURITES_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TICKETS_TABLE_NAME);
         onCreate(db);
     }
 }

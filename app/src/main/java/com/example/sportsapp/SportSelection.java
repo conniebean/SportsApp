@@ -81,7 +81,6 @@ public class SportSelection extends AppCompatActivity {
                 break;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
         return true;
     }

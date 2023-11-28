@@ -63,8 +63,6 @@ public class TeamSelection extends AppCompatActivity {
 
                 if (selectedTeam != null) {
                     ArrayList<Player> players = dbHandler.readPlayers(selectedTeam.id);
-
-                    Toast.makeText(getApplicationContext(), "Team Selected: " + selectedTeam.name, Toast.LENGTH_SHORT).show();
                     if (players.size() == 0) {
                         new Thread() {
                             @Override public void run() { _getPlayers(selectedTeam.id); }
