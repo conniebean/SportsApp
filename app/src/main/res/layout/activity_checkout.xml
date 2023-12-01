@@ -89,6 +89,7 @@
         android:ems="10"
         android:textColorHint="@color/white"
         android:hint="Full Name"
+        android:enabled="false"
         android:textColor="@color/white"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"

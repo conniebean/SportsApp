@@ -20,14 +20,17 @@ import java.util.Random;
 
 public class Checkout extends AppCompatActivity {
 
-    TextView gameTitle, gameDate, gameLocation, ticketPrice, ticketQuantity, totalPrice,  errorText;
+    TextView userName, gameTitle, gameDate, gameLocation, ticketPrice, ticketQuantity, totalPrice,  errorText;
     ImageView gameImage;
     Button btnPurchase;
     private DBHandler dbHandler;
+    String username;
     boolean error = false;
     Double ticketPriceValue;
     int quantity;
     Double total;
+    SharedPreferences settings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class Checkout extends AppCompatActivity {
 
         dbHandler = new DBHandler(Checkout.this);
 
+        userName = findViewById(R.id.txtUserName);
         gameTitle = findViewById(R.id.txtTitle);
         gameImage = findViewById(R.id.gameImage);
         gameDate = findViewById(R.id.txtViewDate);
@@ -45,6 +49,11 @@ public class Checkout extends AppCompatActivity {
         totalPrice = findViewById(R.id.txtTotal);
         btnPurchase = findViewById(R.id.btnPurchase);
         errorText = findViewById(R.id.textErrors);
+
+        SharedPreferences settings = getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        String username = settings.getString("username", "user");
+        userName.setText(username);
+
 
         // Retrieve data from Intent extras
         Intent intent = getIntent();
@@ -110,14 +119,6 @@ public class Checkout extends AppCompatActivity {
     public void confirmInformation() {
         error = false;
         StringBuilder errorMessage = new StringBuilder();
-        // Validation for full name
-        EditText full_name_Validate = findViewById(R.id.txtUserName);
-        String full_name = full_name_Validate.getText().toString().trim();
-        if (full_name.isEmpty()) {
-            errorMessage.append("No entered full name\n");
-            error = true;
-            full_name_Validate.setError("Please enter your full name");
-        }
         // Validation for email
         EditText email_Validate = findViewById(R.id.txtEmail);
         String email = email_Validate.getText().toString().trim();
@@ -175,7 +176,7 @@ public class Checkout extends AppCompatActivity {
         // If there are no errors, proceed
         if (!error) {
             Ticket ticket = new Ticket();
-            ticket.setUserName(full_name);
+            ticket.setUserName(username);
             ticket.setUserEmail(email);
             ticket.setTicketPrice(ticketPriceValue);
             ticket.setTicketQuantity(quantity);
