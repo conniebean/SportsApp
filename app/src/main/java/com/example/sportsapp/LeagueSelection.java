@@ -69,8 +69,6 @@ public class LeagueSelection extends AppCompatActivity {
                     Intent teamSelection = new Intent(LeagueSelection.this, TeamSelection.class);
                     teamSelection.putExtra("league",leagueName);
                     startActivity(teamSelection);
-
-                    Toast.makeText(getApplicationContext(), "League Selected: " + leagueName, Toast.LENGTH_SHORT).show();
                 }
             }
         });
