@@ -16,8 +16,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -44,6 +47,21 @@ public class GamesSelection extends AppCompatActivity {
         Log.i("games", games.toString());
         GamesListAdapter adapter = new GamesListAdapter(this, games);
         lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Game selectedGame = games.get(position);
+                if (selectedGame != null) {
+                    Intent checkoutIntent = new Intent(GamesSelection.this, Checkout.class);
+                    checkoutIntent.putExtra("gameTitle", selectedGame.gameName);
+                    checkoutIntent.putExtra("gameImage", selectedGame.thumbUrl);
+                    checkoutIntent.putExtra("gameDate", selectedGame.date);
+                    checkoutIntent.putExtra("gameLocation", selectedGame.venue);
+                    startActivity(checkoutIntent);
+                }
+            }
+        });
     }
 
     @Override
