@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,35 +52,29 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "User " + user.getUsername() + " does not exist. Please sign up first.", Toast.LENGTH_SHORT).show();
             }
             else {
-                editor.putString("username", user.getUsername());
-                editor.apply();
-                Intent sports = new Intent(MainActivity.this, SportSelection.class);
-                this.startActivity(sports);
+                Log.i("user", user.getPassword() + userList.get(0).getPassword());
+                if (Objects.equals(user.getPassword(), userList.get(0).getPassword())) {
+                    editor.putString("username", user.getUsername());
+                    editor.apply();
+                    Intent sports = new Intent(MainActivity.this, SportSelection.class);
+                    this.startActivity(sports);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Incorrect Password. Please Try Again.", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
     public void onSignUp(View view) {
-        User user = getUserInput();
-        if (user != null) {
-            ArrayList<User> userList = dbHandler.readUser(user.getUsername());
-            if (userList.size() == 0) {
-                dbHandler.addNewUser(user);
-                editor.putString("username", user.getUsername());
-                editor.apply();
-                Intent sports = new Intent(MainActivity.this, SportSelection.class);
-                this.startActivity(sports);
-            }
-            else {
-                Toast.makeText(getApplicationContext(), "User " + user.getUsername() + " already exists. Please choose a unique username.", Toast.LENGTH_SHORT).show();
-            }
-        }
+        Intent signUp = new Intent(MainActivity.this, SignUp.class);
+        this.startActivity(signUp);
     }
 
     private User getUserInput() {
         User user = new User();
         user.setUsername(username.getText().toString());
-        user.setPassword(username.getText().toString());
+        user.setPassword(password.getText().toString());
 
         String error = "";
 
