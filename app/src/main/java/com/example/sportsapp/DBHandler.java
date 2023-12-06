@@ -471,6 +471,33 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //Author: Ava Schembri-Kress
+    public ArrayList<Ticket> readTickets(String userName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor ticketCursor = db.rawQuery("SELECT * FROM " + TICKETS_TABLE_NAME +
+                " WHERE " + TICKETS_USER_NAME + " = '" + userName + "'", null);
+
+        ArrayList<Ticket> result = new ArrayList<>();
+
+        if (ticketCursor != null && ticketCursor.moveToFirst()) {
+            do {
+                Ticket ticket = new Ticket();
+                ticket.id = ticketCursor.getInt(0);
+                ticket.userName = ticketCursor.getString(1);
+                ticket.userEmail = ticketCursor.getString(2);
+                ticket.ticketPrice = ticketCursor.getDouble(3);
+                ticket.ticketQuantity = ticketCursor.getInt(4);
+                ticket.total = ticketCursor.getDouble(5);
+                ticket.gameId = ticketCursor.getString(6);
+                result.add(ticket);
+            } while (ticketCursor.moveToNext());
+        }
+        if (ticketCursor != null) {
+            ticketCursor.close();
+        }
+        return result;
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.

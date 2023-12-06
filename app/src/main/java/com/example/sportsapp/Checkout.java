@@ -98,7 +98,8 @@ public class Checkout extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 confirmInformation();
-            }
+                Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
+                startActivity(ticketInfo);}
         });
     }
 

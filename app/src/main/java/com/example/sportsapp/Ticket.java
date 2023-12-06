@@ -57,4 +57,13 @@ public class Ticket {
     public void setTotal(double total) {
         this.total = total;
     }
+
+    public Ticket(String userName, String userEmail, Double ticketPrice, int ticketQuantity, String gameId) {
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.ticketPrice = ticketPrice;
+        this.ticketQuantity = ticketQuantity;
+        this.gameId = gameId;
+        this.total = ticketPrice * ticketQuantity;
+    }
 }
