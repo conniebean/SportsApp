@@ -6,11 +6,15 @@
 
 package com.example.sportsapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,17 +64,16 @@ public class TeamInfo extends AppCompatActivity {
         Picasso.get().load(team.teamLogoUrl).into(teamLogo);
         description.setText(team.description);
 
-        if (dbHandler.readGames(teamId).size() == 0) {
-            new Thread() {
-                @Override public void run() { _getGames(); }
-            }.start();
-        }
-
         final ListView lv = findViewById(R.id.players_list);
 
         ArrayList<Player> players = dbHandler.readPlayers(teamId);
         PlayerListAdapter adapter = new PlayerListAdapter(this, players);
         lv.setAdapter(adapter);
+
+        ArrayList<Game> games = dbHandler.readGames(teamId);
+        if (games.size() == 0) {
+            gamesButton.setEnabled(false);
+        }
     }
 
     public void goToGames(View view) {
@@ -79,44 +82,35 @@ public class TeamInfo extends AppCompatActivity {
         games.putExtra("teamName", team.name);
         this.startActivity(games);
     }
-    private void _getGames() {
-        String url = "https://thesportsdb.p.rapidapi.com/eventsnext.php?id=" + team.id;
-        APICallWrapper wrapper = new APICallWrapper();
-        apiHandler.getData( TeamInfo.this, url, null, "games", wrapper);
 
-        try {
-            wrapper.waitForReady();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.item_selection_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.sports:
+                Intent sportsSelection = new Intent(this, SportSelection.class);
+                startActivity(sportsSelection);
+                break;
+
+            case R.id.tickets:
+//                Intent ticketSelection = new Intent(this, TicketSelection.class);
+//                startActivity(ticketSelection);
+                break;
+            case R.id.favourites:
+                Intent favouritesView = new Intent(this, FavouritesView.class);
+                startActivity(favouritesView);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
-
-        JSONObject responseObject;
-        try {
-            responseObject = new JSONObject(wrapper.response);
-            JSONArray responseArray = responseObject.getJSONArray("events");
-
-            for (int i=0; i < responseArray.length(); i++) {
-                JSONObject oneObject = responseArray.getJSONObject(i);
-                Game game = new Game();
-                game.id = oneObject.getInt("idEvent");
-                game.teamId = team.id;
-                game.gameName = oneObject.getString("strEvent");
-                game.date = oneObject.getString("dateEvent");
-                game.time = oneObject.getString("strTime");
-                String venue = oneObject.getString("strVenue");
-                if (venue == null || venue == "null" || venue.isEmpty()) {
-                    venue = "No Venue Information";
-                }
-                game.venue = venue;
-                game.country = oneObject.getString("strCountry");
-                game.status = oneObject.getString("strStatus");
-                game.thumbUrl = oneObject.getString("strThumb");
-
-                dbHandler.addNewGame(game);
-            }
-
-        } catch (JSONException e) {
-            Log.d("game", "Error parsing game " + e.getMessage());
-        }
+        return true;
     }
 }
