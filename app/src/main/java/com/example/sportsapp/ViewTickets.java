@@ -5,7 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -15,6 +17,9 @@ public class ViewTickets extends AppCompatActivity {
     private DBHandler dbHandler;
     private CustomListAdapterTickets ticketRVAdapter;
     private RecyclerView ticketsRV;
+    String username;
+    int teamId;
+    SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +28,17 @@ public class ViewTickets extends AppCompatActivity {
 
         dbHandler = new DBHandler(this);
 
-        String loggedInUserName = "username";
-        ticketModalArrayList = dbHandler.readTickets(loggedInUserName);
+        final ListView lv = findViewById(R.id.idRVTickets);
+
+        Intent intent = getIntent();
+        teamId = intent.getIntExtra("teamId", 0);
+        username = settings.getString("username", "user");
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        ArrayList<Game> games = dbHandler.readGames(teamId);
+        ArrayList<Ticket> tickets = dbHandler.readTickets(username);
 
         ticketsRV = findViewById(R.id.idRVTickets);
-        ticketRVAdapter = new CustomListAdapterTickets(ticketModalArrayList, new ArrayList<>(), this);
-        ticketsRV.setLayoutManager(new LinearLayoutManager(this));
-        ticketsRV.setAdapter(ticketRVAdapter);
+        CustomListAdapterTickets adapter = new CustomListAdapterTickets(this, tickets, games);
+        lv.setAdapter(adapter);
     }
 }

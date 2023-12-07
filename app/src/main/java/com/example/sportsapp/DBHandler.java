@@ -488,7 +488,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 ticket.ticketPrice = ticketCursor.getDouble(3);
                 ticket.ticketQuantity = ticketCursor.getInt(4);
                 ticket.total = ticketCursor.getDouble(5);
-                ticket.gameId = ticketCursor.getString(6);
+                ticket.gameId = ticketCursor.getInt(6);
                 result.add(ticket);
             } while (ticketCursor.moveToNext());
         }

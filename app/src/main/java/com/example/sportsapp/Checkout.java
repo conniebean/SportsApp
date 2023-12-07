@@ -27,7 +27,7 @@ public class Checkout extends AppCompatActivity {
     String username;
     boolean error = false;
     Double ticketPriceValue;
-    int quantity;
+    int quantity, gameId;
     Double total;
     SharedPreferences settings;
 
@@ -57,6 +57,7 @@ public class Checkout extends AppCompatActivity {
 
         // Retrieve data from Intent extras
         Intent intent = getIntent();
+        gameId = intent.getIntExtra("gameId", 0);
         gameTitle.setText("Purchase Tickets for: \n" + intent.getStringExtra("gameTitle"));
         String imageUrl = intent.getStringExtra("gameImage");
         Glide.with(this)
@@ -177,11 +178,12 @@ public class Checkout extends AppCompatActivity {
         // If there are no errors, proceed
         if (!error) {
             Ticket ticket = new Ticket();
-            ticket.setUserName(username);
+            ticket.setUserName(userName.getText().toString());
             ticket.setUserEmail(email);
             ticket.setTicketPrice(ticketPriceValue);
             ticket.setTicketQuantity(quantity);
             ticket.setTotal(total);
+            ticket.setGameId(gameId);
 
             // Add the ticket information to the database
             dbHandler.addNewTicket(ticket);
