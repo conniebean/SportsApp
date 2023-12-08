@@ -14,10 +14,29 @@
         android:textStyle="bold"
         android:paddingLeft="10dp"
         android:paddingBottom="5dp"/>
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="194dp"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:hint="Search for a team"
+        android:textColorHint="@color/black"
+        android:textSize="22dp" />
+
+    <Button
+        android:id="@+id/buttonSearch"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:onClick="searchTeams"
+        android:text="Search" />
+
     <ListView
         android:id="@+id/teams_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:divider="@color/white"
         android:dividerHeight="2dp" />
+
+
 </LinearLayout>

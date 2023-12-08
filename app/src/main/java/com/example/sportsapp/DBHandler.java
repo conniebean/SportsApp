@@ -9,6 +9,7 @@ package com.example.sportsapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -277,6 +278,27 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursorFavourites.close();
         return favouritesArrayList;
+    }
+
+    public ArrayList<Team> searchTeamList(String search, String leagueName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor teamsCursor = db.rawQuery(
+                "SELECT * FROM " + TEAMS_TABLE_NAME +
+                        " WHERE " + TEAMS_NAME_COL + " LIKE '%" + search + "%'" +
+                        " AND " + TEAMS_LEAGUES_COL + " = '" + leagueName + "'",null);
+        ArrayList<Team> teamArrayList = new ArrayList<>();
+        if (teamsCursor.moveToFirst()) {
+            do {
+                Team team = new Team();
+                team.id = teamsCursor.getInt(0);
+                team.name = teamsCursor.getString(1);
+                team.leagueName = teamsCursor.getString(3);
+                team.sportName = teamsCursor.getString(4);
+                teamArrayList.add(team);
+            } while (teamsCursor.moveToNext());
+        }
+        teamsCursor.close();
+        return teamArrayList;
     }
 
     public void removeTeamFromFavourites(String teamName){
