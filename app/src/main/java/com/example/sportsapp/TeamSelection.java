@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +38,17 @@ public class TeamSelection extends AppCompatActivity {
     private APIHandler apiHandler;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
+    EditText search;
+    Button searchButton;
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_selection);
         apiHandler = new APIHandler();
-
+        search = findViewById(R.id.search);
+        searchButton = findViewById(R.id.buttonSearch);
         settings = getPreferences(MODE_PRIVATE);
         editor = settings.edit();
 
@@ -55,7 +61,7 @@ public class TeamSelection extends AppCompatActivity {
 
 
         teams = dbHandler.readTeams(leagueName);
-        final ListView lv = findViewById(R.id.teams_list);
+        lv = findViewById(R.id.teams_list);
 
         adapter = new CustomListAdapterTeam(this, teams);
         lv.setAdapter(adapter);
@@ -83,6 +89,14 @@ public class TeamSelection extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void searchTeams(View view){
+        String result = search.getText().toString();
+        ArrayList<Team> newTeams = dbHandler.searchTeamList(result, leagueName);
+
+        adapter = new CustomListAdapterTeam(this, newTeams);
+        lv.setAdapter(adapter);
     }
 
     private void _getPlayersAndGames(int teamId) {
