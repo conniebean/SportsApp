@@ -254,11 +254,10 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-//change the argument to team info when view is implemented
-    public void addNewFavourite(Sport sport){
+    public void addNewFavourite(Team team){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FAVOURITES_TEAM_NAME_COL, sport.name);
+        values.put(FAVOURITES_TEAM_NAME_COL, team.name);
         db.insert(FAVOURITES_TABLE_NAME, null, values);
         db.close();
     }

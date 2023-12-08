@@ -50,15 +50,15 @@
 
   <EditText
       android:id="@+id/editTextDescription"
-      android:layout_width="276dp"
-      android:layout_height="174dp"
+      android:layout_width="253dp"
+      android:layout_height="178dp"
       android:layout_marginTop="8dp"
       android:ems="10"
       android:gravity="start|top"
       android:inputType="none"
       android:textColor="@color/white"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.118"
+      app:layout_constraintHorizontal_bias="0.101"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/teamInfoName" />
 
@@ -81,14 +81,26 @@
 
   <Button
       android:id="@+id/buttonGames"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="78dp"
+      android:layout_height="40dp"
       android:layout_marginTop="16dp"
-      android:text="Games"
       android:onClick="goToGames"
+      android:text="Games"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.483"
+      app:layout_constraintHorizontal_bias="0.609"
       app:layout_constraintStart_toEndOf="@+id/editTextDescription"
       app:layout_constraintTop_toBottomOf="@+id/textViewCountryText" />
+
+  <Button
+      android:id="@+id/buttonFavourite"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="27dp"
+      android:text="Favourite"
+      android:onClick="addTeamToFavourites"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="1.0"
+      app:layout_constraintStart_toEndOf="@+id/editTextDescription"
+      app:layout_constraintTop_toBottomOf="@+id/buttonGames" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
