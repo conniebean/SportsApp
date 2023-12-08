@@ -30,8 +30,9 @@ public class CustomListAdapterTickets extends BaseAdapter {
     private ArrayList<Game> gameArrayList;
     private LayoutInflater layoutInflater;
 
-    public CustomListAdapterTickets(Context aContext, ArrayList<Ticket> ticketModalArrayList) {
+    public CustomListAdapterTickets(Context aContext, ArrayList<Ticket> ticketModalArrayList, ArrayList<Game> gameArrayList) {
         this.ticketModalArrayList = ticketModalArrayList;
+        this.gameArrayList = gameArrayList;
         layoutInflater = LayoutInflater.from(aContext);
     }
 
@@ -68,8 +69,8 @@ public class CustomListAdapterTickets extends BaseAdapter {
             holder = (ViewHolder) v.getTag();
         }
         holder.gameNameTV.setText(gameArrayList.get(position).gameName);
-        holder.tickeyQuantityTV.setText(ticketModalArrayList.get(position).ticketQuantity);
-        holder.ticketTotalTV.setText((int) ticketModalArrayList.get(position).getTotal());
+        holder.tickeyQuantityTV.setText(String.valueOf("Tickets: " + ticketModalArrayList.get(position).ticketQuantity));
+        holder.ticketTotalTV.setText(String.valueOf("Total: " + (int) ticketModalArrayList.get(position).getTotal()));
         holder.gameLocationTV.setText(gameArrayList.get(position).venue);
         holder.gameDateTV.setText(gameArrayList.get(position).date);
         Picasso.get().load(gameArrayList.get(position).thumbUrl).into(holder.gameImgTV);

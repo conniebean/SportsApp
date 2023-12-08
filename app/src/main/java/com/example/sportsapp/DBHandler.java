@@ -454,12 +454,12 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return result;
     }
-    public ArrayList<Game> readGamesByGame(int gameId) {
+
+    public Game readGamesByGame(int gameId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor gamesCursor = db.rawQuery("SELECT * FROM " + GAMES_TABLE_NAME +
                 " WHERE " +  GAMES_ID_COL + " = '" + gameId + "'", null);
 
-        ArrayList<Game> result = new ArrayList<>();
 
         if (gamesCursor != null && gamesCursor.moveToFirst()) {
             do {
@@ -473,7 +473,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 game.country = gamesCursor.getString(6);
                 game.status = gamesCursor.getString(7);
                 game.thumbUrl = gamesCursor.getString(8);
-                result.add(game);
+                return game;
             } while (gamesCursor.moveToNext());
         }
 
@@ -481,7 +481,7 @@ public class DBHandler extends SQLiteOpenHelper {
             gamesCursor.close();
         }
 
-        return result;
+        return null;
     }
     //Author: Ava Schembri-Kress
     public void addNewTicket(Ticket ticket) {
