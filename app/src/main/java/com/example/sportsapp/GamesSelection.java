@@ -54,6 +54,7 @@ public class GamesSelection extends AppCompatActivity {
                 Game selectedGame = games.get(position);
                 if (selectedGame != null) {
                     Intent checkoutIntent = new Intent(GamesSelection.this, Checkout.class);
+                    checkoutIntent.putExtra("gameId", selectedGame.id);
                     checkoutIntent.putExtra("gameTitle", selectedGame.gameName);
                     checkoutIntent.putExtra("gameImage", selectedGame.thumbUrl);
                     checkoutIntent.putExtra("gameDate", selectedGame.date);

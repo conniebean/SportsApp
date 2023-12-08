@@ -7,7 +7,7 @@ public class Ticket {
     public Double ticketPrice;
     public int ticketQuantity;
     public Double total;
-    public String gameId;
+    public int gameId;
 
     public Ticket() {
         // Constructor if needed
@@ -56,5 +56,18 @@ public class Ticket {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public int getGameId(){return gameId;}
+    public void setGameId(int gameId){this.gameId = gameId;}
+
+
+    public Ticket(String userName, String userEmail, Double ticketPrice, int ticketQuantity, int gameId) {
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.ticketPrice = ticketPrice;
+        this.ticketQuantity = ticketQuantity;
+        this.gameId = gameId;
+        this.total = ticketPrice * ticketQuantity;
     }
 }

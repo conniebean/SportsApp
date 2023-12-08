@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context=".SportSelection">
+
+    <TextView
+        android:id="@+id/textViewTicketsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[name]'s Tickets"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"/>
+
+    <ListView
+        android:id="@+id/tickets_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/white"
+        android:dividerHeight="1dp" />
+</LinearLayout>
