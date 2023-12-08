@@ -48,8 +48,6 @@ public class SportSelection extends AppCompatActivity {
                 sport = (Sport) lv.getItemAtPosition(position);
                 Intent leagueSelection = new Intent(SportSelection.this, LeagueSelection.class);
                 leagueSelection.putExtra("sportName", sport.name);
-                // leaving this here to remind myself to use on teams view and swap out sport information.
-//                dbHandler.addNewFavourite(sport);
                 startActivity(leagueSelection);
             }
         });

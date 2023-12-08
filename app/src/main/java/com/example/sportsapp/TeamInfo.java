@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -35,7 +36,7 @@ public class TeamInfo extends AppCompatActivity {
     TextView teamName, country;
     ImageView teamLogo;
     EditText description;
-    Button gamesButton;
+    Button gamesButton, favouriteButton;
     Team team;
     DBHandler dbHandler;
     APIHandler apiHandler;
@@ -54,6 +55,7 @@ public class TeamInfo extends AppCompatActivity {
         description = findViewById(R.id.editTextDescription);
         description.setFocusable(false);
         gamesButton = findViewById(R.id.buttonGames);
+        favouriteButton = findViewById(R.id.buttonFavourite);
 
         Intent intent = getIntent();
         int teamId = intent.getIntExtra("teamId", 0);
@@ -81,6 +83,11 @@ public class TeamInfo extends AppCompatActivity {
         games.putExtra("teamId", team.id);
         games.putExtra("teamName", team.name);
         this.startActivity(games);
+    }
+
+    public void addTeamToFavourites(View view){
+        dbHandler.addNewFavourite(team);
+        Toast.makeText(getApplicationContext(), "Team " + team.name + " added to favourites", Toast.LENGTH_SHORT).show();
     }
 
     @Override
