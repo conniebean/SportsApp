@@ -449,17 +449,44 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         if (gamesCursor != null) {
-            gamesCursor.close(); // Close the cursor if it's not null
+            gamesCursor.close();
         }
 
         return result;
     }
+    public ArrayList<Game> readGamesByGame(int gameId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor gamesCursor = db.rawQuery("SELECT * FROM " + GAMES_TABLE_NAME +
+                " WHERE " +  GAMES_ID_COL + " = '" + gameId + "'", null);
 
+        ArrayList<Game> result = new ArrayList<>();
+
+        if (gamesCursor != null && gamesCursor.moveToFirst()) {
+            do {
+                Game game = new Game();
+                game.id = gamesCursor.getInt(0);
+                game.teamId = gamesCursor.getInt(1);
+                game.gameName = gamesCursor.getString(2);
+                game.date = gamesCursor.getString(3);
+                game.time = gamesCursor.getString(4);
+                game.venue = gamesCursor.getString(5);
+                game.country = gamesCursor.getString(6);
+                game.status = gamesCursor.getString(7);
+                game.thumbUrl = gamesCursor.getString(8);
+                result.add(game);
+            } while (gamesCursor.moveToNext());
+        }
+
+        if (gamesCursor != null) {
+            gamesCursor.close();
+        }
+
+        return result;
+    }
     //Author: Ava Schembri-Kress
     public void addNewTicket(Ticket ticket) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(TICKETS_ID_COL , ticket.id);
         values.put(TICKETS_USER_NAME , ticket.userName);
         values.put(TICKETS_USER_EMAIL , ticket.userEmail);
         values.put(TICKETS_PRICE, (ticket.ticketPrice));

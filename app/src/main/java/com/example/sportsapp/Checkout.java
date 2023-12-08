@@ -99,8 +99,7 @@ public class Checkout extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 confirmInformation();
-                Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
-                startActivity(ticketInfo);}
+                }
         });
     }
 
@@ -188,6 +187,9 @@ public class Checkout extends AppCompatActivity {
             // Add the ticket information to the database
             dbHandler.addNewTicket(ticket);
             Toast.makeText(this, "Order successfully sent!", Toast.LENGTH_SHORT).show();
+
+            Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
+            startActivity(ticketInfo);
         }
     }
 }

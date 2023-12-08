@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class ViewTickets extends AppCompatActivity {
 
     private ArrayList<Ticket> ticketModalArrayList;
-    private DBHandler dbHandler;
+    DBHandler dbHandler;
     private CustomListAdapterTickets ticketRVAdapter;
     private RecyclerView ticketsRV;
     String username;
@@ -25,6 +25,7 @@ public class ViewTickets extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_tickets);
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
 
         dbHandler = new DBHandler(this);
 
@@ -33,12 +34,15 @@ public class ViewTickets extends AppCompatActivity {
         Intent intent = getIntent();
         teamId = intent.getIntExtra("teamId", 0);
         username = settings.getString("username", "user");
-        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
-        ArrayList<Game> games = dbHandler.readGames(teamId);
+
         ArrayList<Ticket> tickets = dbHandler.readTickets(username);
+        ArrayList<Game> games = new ArrayList<>();
+        for (Ticket ticket : tickets) {
+            games.add(dbHandler.readGamesByGame(ticket.getGameId()));
+        }
 
         ticketsRV = findViewById(R.id.idRVTickets);
-        CustomListAdapterTickets adapter = new CustomListAdapterTickets(this, tickets, games);
+        CustomListAdapterTickets adapter = new CustomListAdapterTickets(this, tickets);
         lv.setAdapter(adapter);
     }
 }

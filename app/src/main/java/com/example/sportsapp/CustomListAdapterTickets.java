@@ -1,3 +1,8 @@
+// -----------------------------------
+// Class: CustomListAdapterTickets
+// Author: Ava Schembri-Kress
+// Description: Adapter for the custom list view for tickets.
+// -----------------------------------
 package com.example.sportsapp;
 
 import android.content.Context;
@@ -25,9 +30,8 @@ public class CustomListAdapterTickets extends BaseAdapter {
     private ArrayList<Game> gameArrayList;
     private LayoutInflater layoutInflater;
 
-    public CustomListAdapterTickets(Context aContext, ArrayList<Ticket> ticketModalArrayList, ArrayList<Game> gameArrayList) {
+    public CustomListAdapterTickets(Context aContext, ArrayList<Ticket> ticketModalArrayList) {
         this.ticketModalArrayList = ticketModalArrayList;
-        this.gameArrayList = gameArrayList;
         layoutInflater = LayoutInflater.from(aContext);
     }
 
