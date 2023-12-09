@@ -81,6 +81,9 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TICKETS_TICKET_QUANTITY = "num_of_tickets";
     private static final String TICKETS_TOTAL = "total";
     private static final String TICKETS_GAME_ID = "game_id";
+    private static final String TICKETS_CARD_NUMBER = "card_number";
+    private static final String TICKETS_EXPIRY = "expiry";
+    private static final String TICKETS_CVV = "cvv";
 
 
     public DBHandler(Context context) {
@@ -153,7 +156,10 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TICKETS_PRICE + " DOUBLE, "
                 + TICKETS_TICKET_QUANTITY + " INTEGER, "
                 + TICKETS_TOTAL + " DOUBLE, "
-                + TICKETS_GAME_ID + " INTEGER)";
+                + TICKETS_GAME_ID + " INTEGER, "
+                + TICKETS_CARD_NUMBER + " INTEGER, "
+                + TICKETS_EXPIRY + " INTEGER, "
+                + TICKETS_CVV + " INTEGER)";
         db.execSQL(createTicketsTableQuery);
 
     }
@@ -514,6 +520,9 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(TICKETS_TICKET_QUANTITY, ticket.ticketQuantity);
         values.put(TICKETS_TOTAL, ticket.total);
         values.put(TICKETS_GAME_ID , ticket.gameId);
+        values.put(TICKETS_CARD_NUMBER , ticket.cardNumber);
+        values.put(TICKETS_EXPIRY , ticket.expiry);
+        values.put(TICKETS_CVV , ticket.cvv);
         Log.i("database", db.toString());
         db.insert(TICKETS_TABLE_NAME, null, values);
         db.close();
@@ -537,6 +546,9 @@ public class DBHandler extends SQLiteOpenHelper {
                 ticket.ticketQuantity = ticketCursor.getInt(4);
                 ticket.total = ticketCursor.getDouble(5);
                 ticket.gameId = ticketCursor.getInt(6);
+                ticket.cardNumber = ticketCursor.getString(7);
+                ticket.expiry = ticketCursor.getString(8);
+                ticket.cvv = ticketCursor.getString(9);
                 result.add(ticket);
             } while (ticketCursor.moveToNext());
         }
@@ -546,6 +558,55 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    public Ticket readTicketById(int ticketId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor ticketCursor = db.rawQuery("SELECT * FROM " + TICKETS_TABLE_NAME +
+                " WHERE " + TICKETS_ID_COL + " = '" + ticketId + "'", null);
+
+        if (ticketCursor != null && ticketCursor.moveToFirst()) {
+            do {
+                Ticket ticket = new Ticket();
+                ticket.id = ticketCursor.getInt(0);
+                ticket.userName = ticketCursor.getString(1);
+                ticket.userEmail = ticketCursor.getString(2);
+                ticket.ticketPrice = ticketCursor.getDouble(3);
+                ticket.ticketQuantity = ticketCursor.getInt(4);
+                ticket.total = ticketCursor.getDouble(5);
+                ticket.gameId = ticketCursor.getInt(6);
+                ticket.cardNumber = ticketCursor.getString(7);
+                ticket.expiry = ticketCursor.getString(8);
+                ticket.cvv = ticketCursor.getString(9);
+
+                return ticket;
+            } while (ticketCursor.moveToNext());
+        }
+        if (ticketCursor != null) {
+            ticketCursor.close();
+        }
+        return null;
+    }
+
+    public void updateTicket(Ticket ticket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String sqlQuery = "UPDATE " + TICKETS_TABLE_NAME + " SET " +
+                TICKETS_TICKET_QUANTITY + "=" + ticket.ticketQuantity + ", " +
+                TICKETS_USER_EMAIL + "='" + ticket.userEmail + "', " +
+                TICKETS_TOTAL + "=" + ticket.total  + ", " +
+                TICKETS_CARD_NUMBER + "=" + ticket.cardNumber  + ", " +
+                TICKETS_EXPIRY + "=" + ticket.expiry + ", " +
+                TICKETS_CVV + "=" + ticket.cvv +
+                " WHERE id=" + ticket.id + ";";
+         db.execSQL(sqlQuery);
+        db.close();
+    }
+
+    public void deleteTicket(Ticket ticket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sqlQuery = "DELETE FROM " + TICKETS_TABLE_NAME + " WHERE id=" + ticket.id + ";";
+        db.execSQL(sqlQuery);
+        db.close();
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.
