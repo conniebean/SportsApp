@@ -71,7 +71,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private static final String FAVOURITES_TABLE_NAME = "favourites";
     private static final String FAVOURITES_ID_COL = "id";
+    private static final String FAVOURITES_USER_COL = "user";
+    private static final String FAVOURITES_TEAM_ID_COL = "teamId";
     private static final String FAVOURITES_TEAM_NAME_COL = "teamName";
+    private static final String FAVOURITES_TEAM_LOGO_COL = "logoUrl";
 
     private static final String TICKETS_TABLE_NAME = "tickets";
     private static final String TICKETS_ID_COL = "id";
@@ -143,7 +146,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String createFavouritesTableQuery = "CREATE TABLE " + FAVOURITES_TABLE_NAME + " ("
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + FAVOURITES_TEAM_NAME_COL + " TEXT)";
+                + FAVOURITES_USER_COL + " TEXT, "
+                + FAVOURITES_TEAM_ID_COL + " INTEGER, "
+                + FAVOURITES_TEAM_NAME_COL + " TEXT, "
+                + FAVOURITES_TEAM_LOGO_COL + " TEXT)";
         db.execSQL(createFavouritesTableQuery);
 
         String createTicketsTableQuery = "CREATE TABLE " + TICKETS_TABLE_NAME + " ("
@@ -254,24 +260,52 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addNewFavourite(Team team){
+    public void addNewFavourite(Team team, String username){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(FAVOURITES_USER_COL, username);
+        values.put(FAVOURITES_TEAM_ID_COL, team.id);
         values.put(FAVOURITES_TEAM_NAME_COL, team.name);
+        values.put(FAVOURITES_TEAM_LOGO_COL, team.teamLogoUrl);
         db.insert(FAVOURITES_TABLE_NAME, null, values);
         db.close();
     }
 
-    public ArrayList<Favourites> getUserFavourites(){
+    public boolean getUserTeamAlreadyFavourited(String username, int teamId){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME, null);
+        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME +
+                " WHERE " + FAVOURITES_USER_COL + " = '" + username + "'"
+                + " AND " + FAVOURITES_TEAM_ID_COL + " = '" + teamId + "'", null);
 
         ArrayList<Favourites> favouritesArrayList = new ArrayList<>();
 
         if (cursorFavourites.moveToFirst()){
             do {
-                favouritesArrayList.add(new Favourites(
-                        cursorFavourites.getString(1)));
+                Favourites fav = new Favourites();
+                fav.id = cursorFavourites.getInt(2);
+                fav.teamName = cursorFavourites.getString(3);
+                favouritesArrayList.add(fav);
+            }while (cursorFavourites.moveToNext());
+        }
+
+        cursorFavourites.close();
+        return favouritesArrayList.size() > 0;
+    }
+
+    public ArrayList<Favourites> getUserFavourites(String username){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME +
+                " WHERE " + FAVOURITES_USER_COL + " = '" + username + "'", null);
+
+        ArrayList<Favourites> favouritesArrayList = new ArrayList<>();
+
+        if (cursorFavourites.moveToFirst()){
+            do {
+                Favourites fav = new Favourites();
+                fav.id = cursorFavourites.getInt(2);
+                fav.teamName = cursorFavourites.getString(3);
+                fav.logoUrl = cursorFavourites.getString(4);
+                favouritesArrayList.add(fav);
             }while (cursorFavourites.moveToNext());
         }
 

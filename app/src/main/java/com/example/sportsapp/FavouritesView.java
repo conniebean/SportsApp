@@ -1,6 +1,7 @@
 package com.example.sportsapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,21 +25,28 @@ public class FavouritesView extends AppCompatActivity {
     DBHandler dbHandler;
     ListView lv;
     ArrayList favouritesList;
+    SharedPreferences settings;
+    String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites_view);
         dbHandler = new DBHandler(FavouritesView.this);
 
-        favouritesList = dbHandler.getUserFavourites();
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        username = settings.getString("username", "user");
+
+        favouritesList = dbHandler.getUserFavourites(username);
         lv = (ListView) findViewById(R.id.favourites_list);
 
         lv.setAdapter(new FavouritesListAdapter(this, favouritesList));
     }
 
     public void clickViewTeams(View view){
-        //change this to team info when it's created
-        Intent viewTeamInfo = new Intent(this, TeamSelection.class);
+        int position = lv.getPositionForView(view);
+        Favourites item = (Favourites) lv.getItemAtPosition(position);
+        Intent viewTeamInfo = new Intent(this, TeamInfo.class);
+        viewTeamInfo.putExtra("teamId", item.id);
         startActivity(viewTeamInfo);
     }
 
