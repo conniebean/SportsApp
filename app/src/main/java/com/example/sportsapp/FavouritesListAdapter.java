@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -44,6 +47,7 @@ public class FavouritesListAdapter extends BaseAdapter {
             holder.uTeamName = (TextView) v.findViewById(R.id.teamName);
             holder.uViewTeam = (Button) v.findViewById(R.id.btnViewTeam);
             holder.uRemoveTeam = (Button) v.findViewById(R.id.btnRemove);
+            holder.uLogo = (ImageView) v.findViewById(R.id.imageViewLogo);
 
             v.setTag(holder);
         }
@@ -52,6 +56,7 @@ public class FavouritesListAdapter extends BaseAdapter {
             holder = (ViewHolder) v.getTag();
         }
         holder.uTeamName.setText(listData.get(position).teamName);
+        Picasso.get().load(listData.get(position).logoUrl).into(holder.uLogo);
         return v;
     }
 
@@ -59,5 +64,6 @@ public class FavouritesListAdapter extends BaseAdapter {
         TextView uTeamName;
         Button  uViewTeam;
         Button  uRemoveTeam;
+        ImageView uLogo;
     }
 }

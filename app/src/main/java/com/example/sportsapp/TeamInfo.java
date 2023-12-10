@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,12 +41,15 @@ public class TeamInfo extends AppCompatActivity {
     Team team;
     DBHandler dbHandler;
     APIHandler apiHandler;
+    SharedPreferences settings;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_info);
-
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        username = settings.getString("username", "user");
         dbHandler = new DBHandler(TeamInfo.this);
         apiHandler = new APIHandler();
 
@@ -86,8 +90,13 @@ public class TeamInfo extends AppCompatActivity {
     }
 
     public void addTeamToFavourites(View view){
-        dbHandler.addNewFavourite(team);
-        Toast.makeText(getApplicationContext(), "Team " + team.name + " added to favourites", Toast.LENGTH_SHORT).show();
+        if (!dbHandler.getUserTeamAlreadyFavourited(username, team.id)) {
+            dbHandler.addNewFavourite(team, username);
+            Toast.makeText(getApplicationContext(), "Team " + team.name + " added to favourites.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Team " + team.name + " already added to favourites.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
