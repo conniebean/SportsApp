@@ -71,7 +71,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private static final String FAVOURITES_TABLE_NAME = "favourites";
     private static final String FAVOURITES_ID_COL = "id";
+    private static final String FAVOURITES_USER_COL = "user";
+    private static final String FAVOURITES_TEAM_ID_COL = "teamId";
     private static final String FAVOURITES_TEAM_NAME_COL = "teamName";
+    private static final String FAVOURITES_TEAM_LOGO_COL = "logoUrl";
 
     private static final String TICKETS_TABLE_NAME = "tickets";
     private static final String TICKETS_ID_COL = "id";
@@ -81,6 +84,9 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TICKETS_TICKET_QUANTITY = "num_of_tickets";
     private static final String TICKETS_TOTAL = "total";
     private static final String TICKETS_GAME_ID = "game_id";
+    private static final String TICKETS_CARD_NUMBER = "card_number";
+    private static final String TICKETS_EXPIRY = "expiry";
+    private static final String TICKETS_CVV = "cvv";
 
 
     public DBHandler(Context context) {
@@ -143,7 +149,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String createFavouritesTableQuery = "CREATE TABLE " + FAVOURITES_TABLE_NAME + " ("
                 + FAVOURITES_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + FAVOURITES_TEAM_NAME_COL + " TEXT)";
+                + FAVOURITES_USER_COL + " TEXT, "
+                + FAVOURITES_TEAM_ID_COL + " INTEGER, "
+                + FAVOURITES_TEAM_NAME_COL + " TEXT, "
+                + FAVOURITES_TEAM_LOGO_COL + " TEXT)";
         db.execSQL(createFavouritesTableQuery);
 
         String createTicketsTableQuery = "CREATE TABLE " + TICKETS_TABLE_NAME + " ("
@@ -153,7 +162,10 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TICKETS_PRICE + " DOUBLE, "
                 + TICKETS_TICKET_QUANTITY + " INTEGER, "
                 + TICKETS_TOTAL + " DOUBLE, "
-                + TICKETS_GAME_ID + " INTEGER)";
+                + TICKETS_GAME_ID + " INTEGER, "
+                + TICKETS_CARD_NUMBER + " INTEGER, "
+                + TICKETS_EXPIRY + " INTEGER, "
+                + TICKETS_CVV + " INTEGER)";
         db.execSQL(createTicketsTableQuery);
 
     }
@@ -254,24 +266,52 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addNewFavourite(Team team){
+    public void addNewFavourite(Team team, String username){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(FAVOURITES_USER_COL, username);
+        values.put(FAVOURITES_TEAM_ID_COL, team.id);
         values.put(FAVOURITES_TEAM_NAME_COL, team.name);
+        values.put(FAVOURITES_TEAM_LOGO_COL, team.teamLogoUrl);
         db.insert(FAVOURITES_TABLE_NAME, null, values);
         db.close();
     }
 
-    public ArrayList<Favourites> getUserFavourites(){
+    public boolean getUserTeamAlreadyFavourited(String username, int teamId){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME, null);
+        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME +
+                " WHERE " + FAVOURITES_USER_COL + " = '" + username + "'"
+                + " AND " + FAVOURITES_TEAM_ID_COL + " = '" + teamId + "'", null);
 
         ArrayList<Favourites> favouritesArrayList = new ArrayList<>();
 
         if (cursorFavourites.moveToFirst()){
             do {
-                favouritesArrayList.add(new Favourites(
-                        cursorFavourites.getString(1)));
+                Favourites fav = new Favourites();
+                fav.id = cursorFavourites.getInt(2);
+                fav.teamName = cursorFavourites.getString(3);
+                favouritesArrayList.add(fav);
+            }while (cursorFavourites.moveToNext());
+        }
+
+        cursorFavourites.close();
+        return favouritesArrayList.size() > 0;
+    }
+
+    public ArrayList<Favourites> getUserFavourites(String username){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorFavourites = db.rawQuery("SELECT * FROM " + FAVOURITES_TABLE_NAME +
+                " WHERE " + FAVOURITES_USER_COL + " = '" + username + "'", null);
+
+        ArrayList<Favourites> favouritesArrayList = new ArrayList<>();
+
+        if (cursorFavourites.moveToFirst()){
+            do {
+                Favourites fav = new Favourites();
+                fav.id = cursorFavourites.getInt(2);
+                fav.teamName = cursorFavourites.getString(3);
+                fav.logoUrl = cursorFavourites.getString(4);
+                favouritesArrayList.add(fav);
             }while (cursorFavourites.moveToNext());
         }
 
@@ -514,6 +554,9 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(TICKETS_TICKET_QUANTITY, ticket.ticketQuantity);
         values.put(TICKETS_TOTAL, ticket.total);
         values.put(TICKETS_GAME_ID , ticket.gameId);
+        values.put(TICKETS_CARD_NUMBER , ticket.cardNumber);
+        values.put(TICKETS_EXPIRY , ticket.expiry);
+        values.put(TICKETS_CVV , ticket.cvv);
         Log.i("database", db.toString());
         db.insert(TICKETS_TABLE_NAME, null, values);
         db.close();
@@ -537,6 +580,9 @@ public class DBHandler extends SQLiteOpenHelper {
                 ticket.ticketQuantity = ticketCursor.getInt(4);
                 ticket.total = ticketCursor.getDouble(5);
                 ticket.gameId = ticketCursor.getInt(6);
+                ticket.cardNumber = ticketCursor.getString(7);
+                ticket.expiry = ticketCursor.getString(8);
+                ticket.cvv = ticketCursor.getString(9);
                 result.add(ticket);
             } while (ticketCursor.moveToNext());
         }
@@ -546,6 +592,55 @@ public class DBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    public Ticket readTicketById(int ticketId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor ticketCursor = db.rawQuery("SELECT * FROM " + TICKETS_TABLE_NAME +
+                " WHERE " + TICKETS_ID_COL + " = '" + ticketId + "'", null);
+
+        if (ticketCursor != null && ticketCursor.moveToFirst()) {
+            do {
+                Ticket ticket = new Ticket();
+                ticket.id = ticketCursor.getInt(0);
+                ticket.userName = ticketCursor.getString(1);
+                ticket.userEmail = ticketCursor.getString(2);
+                ticket.ticketPrice = ticketCursor.getDouble(3);
+                ticket.ticketQuantity = ticketCursor.getInt(4);
+                ticket.total = ticketCursor.getDouble(5);
+                ticket.gameId = ticketCursor.getInt(6);
+                ticket.cardNumber = ticketCursor.getString(7);
+                ticket.expiry = ticketCursor.getString(8);
+                ticket.cvv = ticketCursor.getString(9);
+
+                return ticket;
+            } while (ticketCursor.moveToNext());
+        }
+        if (ticketCursor != null) {
+            ticketCursor.close();
+        }
+        return null;
+    }
+
+    public void updateTicket(Ticket ticket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String sqlQuery = "UPDATE " + TICKETS_TABLE_NAME + " SET " +
+                TICKETS_TICKET_QUANTITY + "=" + ticket.ticketQuantity + ", " +
+                TICKETS_USER_EMAIL + "='" + ticket.userEmail + "', " +
+                TICKETS_TOTAL + "=" + ticket.total  + ", " +
+                TICKETS_CARD_NUMBER + "=" + ticket.cardNumber  + ", " +
+                TICKETS_EXPIRY + "=" + ticket.expiry + ", " +
+                TICKETS_CVV + "=" + ticket.cvv +
+                " WHERE id=" + ticket.id + ";";
+         db.execSQL(sqlQuery);
+        db.close();
+    }
+
+    public void deleteTicket(Ticket ticket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sqlQuery = "DELETE FROM " + TICKETS_TABLE_NAME + " WHERE id=" + ticket.id + ";";
+        db.execSQL(sqlQuery);
+        db.close();
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // this method is called to check if the table exists already.

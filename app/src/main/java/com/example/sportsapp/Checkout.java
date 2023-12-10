@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import java.util.Random;
 public class Checkout extends AppCompatActivity {
 
     TextView userName, gameTitle, gameDate, gameLocation, ticketPrice, ticketQuantity, totalPrice,  errorText;
+    EditText email_Validate, number_of_tickets_Validate, card_number_Validate, exp_date_Validate, cvv_Validate;
     ImageView gameImage;
     Button btnPurchase;
     private DBHandler dbHandler;
@@ -32,6 +34,8 @@ public class Checkout extends AppCompatActivity {
     int quantity, gameId;
     Double total;
     SharedPreferences settings;
+    boolean isEditing = false;
+    int ticketId = 0;
 
 
     @Override
@@ -42,6 +46,11 @@ public class Checkout extends AppCompatActivity {
         dbHandler = new DBHandler(Checkout.this);
 
         userName = findViewById(R.id.txtUserName);
+        email_Validate = findViewById(R.id.txtEmail);
+        number_of_tickets_Validate = findViewById(R.id.txtTicketQuantity);
+        exp_date_Validate = findViewById(R.id.txtExpDate);
+        card_number_Validate = findViewById(R.id.cardNumber);
+        cvv_Validate = findViewById(R.id.txtCvv);
         gameTitle = findViewById(R.id.txtTitle);
         gameImage = findViewById(R.id.gameImage);
         gameDate = findViewById(R.id.txtViewDate);
@@ -59,17 +68,42 @@ public class Checkout extends AppCompatActivity {
 
         // Retrieve data from Intent extras
         Intent intent = getIntent();
+
+        // Check if they are editing a ticket
+        ticketId = intent.getIntExtra("ticketId", -1);
+        if (ticketId != -1) {
+            isEditing = true;
+            btnPurchase.setText("Update");
+        }
+
         gameId = intent.getIntExtra("gameId", 0);
-        gameTitle.setText("Purchase Tickets for: \n" + intent.getStringExtra("gameTitle"));
-        String imageUrl = intent.getStringExtra("gameImage");
+
+        Game game = dbHandler.readGamesByGame(gameId);
+        gameTitle.setText("Purchase Tickets for: \n" + game.gameName);
+        String imageUrl = game.thumbUrl;
         Glide.with(this)
                 .load(imageUrl)
                 .into(gameImage);
-        gameDate.setText("Date: " + intent.getStringExtra("gameDate"));
-        gameLocation.setText("Location: " + intent.getStringExtra("gameLocation"));
+        gameDate.setText("Date: " + game.date);
+        gameLocation.setText("Location: " + game.venue);
 
-        int randomPrice = generateRandomPrice(50, 300);
-        ticketPrice.setText("Ticket Price: $" + randomPrice);
+        if (isEditing) {
+            Ticket existingTicket = dbHandler.readTicketById(ticketId);
+            ticketPriceValue = existingTicket.ticketPrice;
+            Log.i("tickets", String.valueOf(existingTicket.ticketPrice));
+            ticketPrice.setText("Ticket Price: $" + Math.round(existingTicket.ticketPrice));
+            email_Validate.setText(existingTicket.userEmail);
+            number_of_tickets_Validate.setText(String.valueOf(existingTicket.ticketQuantity));
+            total = existingTicket.total;
+            totalPrice.setText("Total: $" + Math.round(existingTicket.total));
+            card_number_Validate.setText(existingTicket.cardNumber);
+            exp_date_Validate.setText(existingTicket.expiry);
+            cvv_Validate.setText(existingTicket.cvv);
+        }
+        else {
+            int randomPrice = generateRandomPrice(50, 300);
+            ticketPrice.setText("Ticket Price: $" + randomPrice);
+        }
 
         // Adding text changed listener to ticket quantity field
         ticketQuantity.addTextChangedListener(new TextWatcher() {
@@ -109,6 +143,7 @@ public class Checkout extends AppCompatActivity {
         String priceString = ticketPrice.getText().toString().replaceAll("\\D+", "");
         ticketPriceValue = Double.parseDouble(priceString);
         quantity = Integer.parseInt(ticketQuantity.getText().toString());
+        Log.i("tickets", "price: " + ticketPriceValue + ", quantity: " + quantity);
         total = ticketPriceValue * quantity;
         totalPrice.setText("Total: $" + total);
     }
@@ -123,7 +158,6 @@ public class Checkout extends AppCompatActivity {
         error = false;
         StringBuilder errorMessage = new StringBuilder();
         // Validation for email
-        EditText email_Validate = findViewById(R.id.txtEmail);
         String email = email_Validate.getText().toString().trim();
         if (email.isEmpty()) {
             errorMessage.append("No entered email\n");
@@ -131,7 +165,6 @@ public class Checkout extends AppCompatActivity {
             email_Validate.setError("Please enter your email");
         }
         // Validation for number of tickets
-        EditText number_of_tickets_Validate = findViewById(R.id.txtTicketQuantity);
         int ticket_quantity = 0;
         try {
             ticket_quantity = Integer.parseInt(number_of_tickets_Validate.getText().toString().trim());
@@ -147,7 +180,6 @@ public class Checkout extends AppCompatActivity {
         }
 
         // Validation for card number
-        EditText card_number_Validate = findViewById(R.id.cardNumber);
         String card_number = card_number_Validate.getText().toString().trim();
         if (card_number.isEmpty() || card_number.length() != 16) {
             errorMessage.append("Incorrect card number. Enter 16 digits\n");
@@ -156,7 +188,6 @@ public class Checkout extends AppCompatActivity {
         }
 
         // Validation for expiry date
-        EditText exp_date_Validate = findViewById(R.id.txtExpDate);
         String exp_date_st = exp_date_Validate.getText().toString().trim();
         if (exp_date_st.length() != 4) {
             errorMessage.append("Incorrect expiry date\n");
@@ -165,7 +196,6 @@ public class Checkout extends AppCompatActivity {
         }
 
         // Validation for CVV code
-        EditText cvv_Validate = findViewById(R.id.txtCvv);
         String cvv = cvv_Validate.getText().toString().trim();
         if (cvv.length() != 3) {
             errorMessage.append("Incorrect CVV\n");
@@ -182,13 +212,23 @@ public class Checkout extends AppCompatActivity {
             ticket.setUserName(userName.getText().toString());
             ticket.setUserEmail(email);
             ticket.setTicketPrice(ticketPriceValue);
-            ticket.setTicketQuantity(quantity);
+            ticket.setTicketQuantity(ticket_quantity);
             ticket.setTotal(total);
             ticket.setGameId(gameId);
+            ticket.cardNumber = card_number;
+            ticket.expiry = exp_date_st;
+            ticket.cvv = cvv;
 
             // Add the ticket information to the database
-            dbHandler.addNewTicket(ticket);
-            Toast.makeText(this, "Order successfully sent!", Toast.LENGTH_SHORT).show();
+            if (isEditing) {
+                ticket.id = ticketId;
+                dbHandler.updateTicket(ticket);
+                Toast.makeText(this, "Order successfully updated!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                dbHandler.addNewTicket(ticket);
+                Toast.makeText(this, "Order successfully sent!", Toast.LENGTH_SHORT).show();
+            }
 
             Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
             startActivity(ticketInfo);

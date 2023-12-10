@@ -8,6 +8,9 @@ public class Ticket {
     public int ticketQuantity;
     public Double total;
     public int gameId;
+    public String cardNumber;
+    public String expiry;
+    public String cvv;
 
     public Ticket() {
         // Constructor if needed

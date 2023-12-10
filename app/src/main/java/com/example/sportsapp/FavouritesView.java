@@ -29,7 +29,7 @@ public class FavouritesView extends AppCompatActivity {
     TextView title;
     SharedPreferences settings;
     String username;
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +41,10 @@ public class FavouritesView extends AppCompatActivity {
         username = settings.getString("username", "user");
         title.setText(username + "'s Favourite Teams");
 
-        favouritesList = dbHandler.getUserFavourites();
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        username = settings.getString("username", "user");
+
+        favouritesList = dbHandler.getUserFavourites(username);
         lv = (ListView) findViewById(R.id.favourites_list);
 
         if (favouritesList.size() > 0) {
@@ -50,8 +53,10 @@ public class FavouritesView extends AppCompatActivity {
     }
 
     public void clickViewTeams(View view){
-        //change this to team info when it's created
-        Intent viewTeamInfo = new Intent(this, TeamSelection.class);
+        int position = lv.getPositionForView(view);
+        Favourites item = (Favourites) lv.getItemAtPosition(position);
+        Intent viewTeamInfo = new Intent(this, TeamInfo.class);
+        viewTeamInfo.putExtra("teamId", item.id);
         startActivity(viewTeamInfo);
     }
 

@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,6 +23,9 @@ public class ViewTickets extends AppCompatActivity {
     int teamId;
     SharedPreferences settings;
     TextView title;
+    Button location, edit, delete;
+    ArrayList<Ticket> tickets;
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +35,18 @@ public class ViewTickets extends AppCompatActivity {
 
         dbHandler = new DBHandler(this);
         title = findViewById(R.id.textViewTicketsTitle);
+        location = findViewById(R.id.buttonLocation);
+        edit = findViewById(R.id.buttonEditTicket);
+        delete = findViewById(R.id.buttonDeleteTicket);
 
-        final ListView lv = findViewById(R.id.tickets_list);
+        lv = findViewById(R.id.tickets_list);
 
         Intent intent = getIntent();
         teamId = intent.getIntExtra("teamId", 0);
         username = settings.getString("username", "user");
 
         title.setText(username + "'s Tickets");
-        ArrayList<Ticket> tickets = dbHandler.readTickets(username);
+        tickets = dbHandler.readTickets(username);
         ArrayList<Game> games = new ArrayList<>();
 
         if (tickets.size() > 0) {
@@ -73,4 +81,23 @@ public class ViewTickets extends AppCompatActivity {
         }
         return true;
     }
+
+    public void editTicket(View view) {
+        int position = lv.getPositionForView(view);
+        Ticket item = (Ticket) lv.getItemAtPosition(position);
+
+        Intent editTicket = new Intent(ViewTickets.this, Checkout.class);
+        editTicket.putExtra("ticketId", item.id);
+        editTicket.putExtra("gameId", item.gameId);
+        this.startActivity(editTicket);
+    }
+
+    public void deleteTicket(View view) {
+        int position = lv.getPositionForView(view);
+        Ticket item = (Ticket) lv.getItemAtPosition(position);
+        dbHandler.deleteTicket(item);
+        Intent tickets = new Intent(ViewTickets.this, ViewTickets.class);
+        this.startActivity(tickets);
+    }
+
 }
