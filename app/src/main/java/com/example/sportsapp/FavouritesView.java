@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,13 +26,20 @@ public class FavouritesView extends AppCompatActivity {
     DBHandler dbHandler;
     ListView lv;
     ArrayList favouritesList;
+    TextView title;
     SharedPreferences settings;
     String username;
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites_view);
         dbHandler = new DBHandler(FavouritesView.this);
+        title = findViewById(R.id.textViewFavouritesTitle);
+
+        settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
+        username = settings.getString("username", "user");
+        title.setText(username + "'s Favourite Teams");
 
         settings =  getSharedPreferences("SPORTS_APP_PREFERENCES", MODE_PRIVATE);
         username = settings.getString("username", "user");
@@ -39,7 +47,9 @@ public class FavouritesView extends AppCompatActivity {
         favouritesList = dbHandler.getUserFavourites(username);
         lv = (ListView) findViewById(R.id.favourites_list);
 
-        lv.setAdapter(new FavouritesListAdapter(this, favouritesList));
+        if (favouritesList.size() > 0) {
+            lv.setAdapter(new FavouritesListAdapter(this, favouritesList));
+        }
     }
 
     public void clickViewTeams(View view){

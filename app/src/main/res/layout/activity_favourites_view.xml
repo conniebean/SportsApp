@@ -10,12 +10,24 @@
         android:id="@+id/linearLayout"
         android:layout_width="412dp"
         android:layout_height="730dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         android:background="@color/background"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="-1dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/textViewFavouritesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[name]'s Favourite Teams"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"/>
 
         <ListView
             android:id="@+id/favourites_list"

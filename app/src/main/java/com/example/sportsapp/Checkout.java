@@ -1,5 +1,6 @@
 package com.example.sportsapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -231,6 +233,30 @@ public class Checkout extends AppCompatActivity {
             Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
             startActivity(ticketInfo);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.sports:
+                Intent sportsSelection = new Intent(this, SportSelection.class);
+                startActivity(sportsSelection);
+                break;
+
+            case R.id.tickets:
+                Intent ticketSelection = new Intent(this, ViewTickets.class);
+                startActivity(ticketSelection);
+                break;
+            case R.id.favourites:
+                Intent favouritesView = new Intent(this, FavouritesView.class);
+                startActivity(favouritesView);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+        return true;
     }
 }
 

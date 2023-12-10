@@ -1,5 +1,6 @@
 package com.example.sportsapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -46,12 +48,38 @@ public class ViewTickets extends AppCompatActivity {
         title.setText(username + "'s Tickets");
         tickets = dbHandler.readTickets(username);
         ArrayList<Game> games = new ArrayList<>();
-        for (Ticket ticket : tickets) {
-            games.add(dbHandler.readGamesByGame(ticket.getGameId()));
-        }
 
-        CustomListAdapterTickets adapter = new CustomListAdapterTickets(this, tickets, games);
-        lv.setAdapter(adapter);
+        if (tickets.size() > 0) {
+            for (Ticket ticket : tickets) {
+                games.add(dbHandler.readGamesByGame(ticket.getGameId()));
+            }
+
+            CustomListAdapterTickets adapter = new CustomListAdapterTickets(this, tickets, games);
+            lv.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sports:
+                Intent sportsSelection = new Intent(this, SportSelection.class);
+                startActivity(sportsSelection);
+                break;
+
+            case R.id.tickets:
+                Intent ticketSelection = new Intent(this, ViewTickets.class);
+                startActivity(ticketSelection);
+                break;
+            case R.id.favourites:
+                Intent favouritesView = new Intent(this, FavouritesView.class);
+                startActivity(favouritesView);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+        return true;
     }
 
     public void editTicket(View view) {
