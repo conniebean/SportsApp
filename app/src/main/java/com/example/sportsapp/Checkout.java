@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
@@ -233,6 +235,13 @@ public class Checkout extends AppCompatActivity {
             Intent ticketInfo = new Intent(Checkout.this, ViewTickets.class);
             startActivity(ticketInfo);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.item_selection_menu, menu);
+        return true;
     }
 
     @Override
