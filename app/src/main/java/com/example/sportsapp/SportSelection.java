@@ -33,7 +33,6 @@ public class SportSelection extends AppCompatActivity {
 
         sportTitle = findViewById(R.id.textViewSportsTitle);
         String username = settings.getString("username", "user");
-        Log.i("settings", String.valueOf(settings.contains("username")));
         sportTitle.setText("Welcome " + username + "!");
 
         dbHandler = new DBHandler(SportSelection.this);
