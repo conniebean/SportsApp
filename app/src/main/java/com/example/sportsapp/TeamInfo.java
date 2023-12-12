@@ -116,8 +116,8 @@ public class TeamInfo extends AppCompatActivity {
                 break;
 
             case R.id.tickets:
-//                Intent ticketSelection = new Intent(this, TicketSelection.class);
-//                startActivity(ticketSelection);
+                Intent ticketSelection = new Intent(this, ViewTickets.class);
+                startActivity(ticketSelection);
                 break;
             case R.id.favourites:
                 Intent favouritesView = new Intent(this, FavouritesView.class);
