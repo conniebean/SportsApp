@@ -1,6 +1,8 @@
 package com.example.sportsapp;
 
 import androidx.fragment.app.FragmentActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +17,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 private ActivityMapsBinding binding;
+String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,9 @@ private ActivityMapsBinding binding;
 
      binding = ActivityMapsBinding.inflate(getLayoutInflater());
      setContentView(binding.getRoot());
+
+     Intent intent = getIntent();
+     gameName = intent.getStringExtra("gameName");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -41,6 +47,7 @@ private ActivityMapsBinding binding;
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         double minLat = 43.6;
         double maxLat = 43.9;
@@ -51,7 +58,7 @@ private ActivityMapsBinding binding;
         double randomLng = minLng + Math.random() * (maxLng - minLng);
 
         LatLng randomLocation = new LatLng(randomLat, randomLng);
-        mMap.addMarker(new MarkerOptions().position(randomLocation).title("Random Location near Toronto"));
+        mMap.addMarker(new MarkerOptions().position(randomLocation).title(gameName));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(randomLocation));
     }
 }

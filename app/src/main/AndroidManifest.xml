@@ -18,12 +18,18 @@
         android:theme="@style/Theme.SportsApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD-xgSoQv6d4nudP0Cp4q0FcZVOmCEyMLk" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:exported="true"
+            android:label="Venue Location">
+        </activity>
        <activity
             android:name=".SignUp"
             android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="${MAPS_API_KEY}" />
         </activity>
         <activity
             android:name=".ViewTickets"

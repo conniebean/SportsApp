@@ -25,6 +25,7 @@ public class ViewTickets extends AppCompatActivity {
     TextView title;
     Button location, edit, delete;
     ArrayList<Ticket> tickets;
+    ArrayList<Game> games;
     ListView lv;
 
     @Override
@@ -47,7 +48,7 @@ public class ViewTickets extends AppCompatActivity {
 
         title.setText(username + "'s Tickets");
         tickets = dbHandler.readTickets(username);
-        ArrayList<Game> games = new ArrayList<>();
+        games = new ArrayList<>();
 
         if (tickets.size() > 0) {
             for (Ticket ticket : tickets) {
@@ -98,6 +99,14 @@ public class ViewTickets extends AppCompatActivity {
         dbHandler.deleteTicket(item);
         Intent tickets = new Intent(ViewTickets.this, ViewTickets.class);
         this.startActivity(tickets);
+    }
+
+    public void goToLocation(View view) {
+        int position = lv.getPositionForView(view);
+
+        Intent location = new Intent(ViewTickets.this, MapsActivity.class);
+        location.putExtra("gameName", games.get(position).gameName);
+        this.startActivity(location);
     }
 
 }
