@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -70,7 +69,7 @@ public class CustomListAdapterTickets extends BaseAdapter {
         }
         holder.gameNameTV.setText(gameArrayList.get(position).gameName);
         holder.tickeyQuantityTV.setText(String.valueOf("Tickets: " + ticketModalArrayList.get(position).ticketQuantity));
-        holder.ticketTotalTV.setText(String.valueOf("Total: " + (int) ticketModalArrayList.get(position).getTotal()));
+        holder.ticketTotalTV.setText(String.valueOf("Total: $" + (int) ticketModalArrayList.get(position).getTotal()));
         holder.gameLocationTV.setText(gameArrayList.get(position).venue);
         holder.gameDateTV.setText(gameArrayList.get(position).date);
         Picasso.get().load(gameArrayList.get(position).thumbUrl).into(holder.gameImgTV);
