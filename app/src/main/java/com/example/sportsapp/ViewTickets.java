@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -106,6 +107,7 @@ public class ViewTickets extends AppCompatActivity {
         int position = lv.getPositionForView(view);
         Ticket item = (Ticket) lv.getItemAtPosition(position);
         dbHandler.deleteTicket(item);
+        Toast.makeText(this, "Ticket Deleted", Toast.LENGTH_SHORT).show();
         Intent tickets = new Intent(ViewTickets.this, ViewTickets.class);
         this.startActivity(tickets);
     }

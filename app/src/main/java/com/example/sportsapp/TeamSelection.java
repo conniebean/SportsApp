@@ -93,9 +93,9 @@ public class TeamSelection extends AppCompatActivity {
 
     public void searchTeams(View view){
         String result = search.getText().toString();
-        ArrayList<Team> newTeams = dbHandler.searchTeamList(result, leagueName);
+        teams = dbHandler.searchTeamList(result, leagueName);
 
-        adapter = new CustomListAdapterTeam(this, newTeams);
+        adapter = new CustomListAdapterTeam(this, teams);
         lv.setAdapter(adapter);
     }
 
